@@ -1,0 +1,11 @@
+{
+    "preload": {
+        "files": [
+            {
+                "type": "image",
+                "key": "map",
+                "url": "./assets/map.png"
+            }
+        ]
+    }
+}
