@@ -2,9 +2,20 @@
     "preload": {
         "files": [
             {
-                "type": "image",
+                "type": "tilemapTiledJSON",
                 "key": "map",
-                "url": "./assets/map.png"
+                "url": "assets/tilemaps/map.json"
+            },
+            {
+                "type": "image",
+                "key": "map-tileset",
+                "url": "assets/tilemaps/tiles/tileset.png"
+            },
+            {
+                "type": "atlas",
+                "key": "player",
+                "textureURL": "assets/player/player.png",
+                "atlasURL": "assets/player/player.json"
             }
         ]
     }

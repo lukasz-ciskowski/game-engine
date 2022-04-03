@@ -1,12 +1,11 @@
-import 'phaser';
-import { GameConfig } from './config';
-
-export class Game extends Phaser.Game {
-  constructor(config: Phaser.Types.Core.GameConfig) {
-    super(config);
-  }
-}
+import { Game } from 'core/Game';
+import { MainScene } from 'scenes/MainScene';
 
 window.addEventListener('load', () => {
-  new Game(GameConfig);
+    Game.init({
+        id: 'game',
+        width: 1024,
+        height: 700,
+        scenes: [MainScene],
+    });
 });
