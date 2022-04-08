@@ -1,18 +1,13 @@
-import { SpriteProcessor } from 'preprocessors/SpriteProcessor';
-import { TilemapProcessor } from 'preprocessors/TilemapProcessor';
-import { BaseController } from './BaseController';
-import { Game } from '../core/Game';
-import { GameMap } from './GameMap';
+import { fetchJson } from 'utils/jsonReader';
+import { BaseController, IController } from './base/BaseController';
+import { GameMap } from './map/GameMap';
+import { Sprite } from './sprite/Sprite';
 
-interface IScene {
+interface IScene extends IController {
     preload(): Promise<void> | void;
-    load(): Promise<void> | void;
-    update(): void;
 }
 
 export class Scene extends BaseController implements IScene {
-    private gameMap: GameMap;
-
     constructor(public readonly name: string) {
         super();
     }
@@ -20,27 +15,18 @@ export class Scene extends BaseController implements IScene {
     public preload(): void {
         return;
     }
-    public load(): void {
-        return;
-    }
-    public update(): void {
-        this.gameMap.drawQueue.drawAll();
-        return;
-    }
 
     public async loadTileMapJSON(path: string) {
-        const result = await this.fetchJson(path);
-        this.gameMap = new GameMap(new TilemapProcessor(result));
-        return this.gameMap;
+        const result = await fetchJson(path);
+        const map = new GameMap(result);
+        await this.addController(map);
+        return map;
     }
 
     public async addSprite(path: string) {
-        const result = await this.fetchJson(path);
-        return new SpriteProcessor(result).loadMetadata(path);
-    }
-
-    private async fetchJson(path: string) {
-        const response = await fetch(path);
-        return await response.json();
+        const result = await fetchJson(path);
+        const sprite = new Sprite(result, path);
+        await this.addController(sprite);
+        return sprite;
     }
 }

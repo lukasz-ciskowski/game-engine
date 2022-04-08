@@ -1,5 +1,6 @@
 import { Scene } from '../controllers/Scene';
 import { Camera } from './Camera';
+import { Cursor } from './Cursor';
 
 interface Config {
     id: string;
@@ -15,6 +16,9 @@ export class Game {
 
     private _scenes: Scene[];
     private _currentScene: Scene | null;
+    private _scale: number = 1;
+
+    public readonly cursor = new Cursor()
 
     private static _instance: Game;
 
@@ -33,7 +37,7 @@ export class Game {
     constructor(config: Config) {
         const canvas = document.querySelector<HTMLCanvasElement>(`#${config.id}`);
 
-        const ctx = canvas?.getContext('2d');
+        const ctx = canvas?.getContext('2d', { alpha: false });
         if (!canvas || !ctx) {
             console.error('Canvas not found');
             return;
@@ -57,9 +61,10 @@ export class Game {
         return this._camera;
     }
 
-    public gameLoop(scene: Scene, updateFn: () => void) {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        updateFn.bind(scene)();
+    public gameLoop(scene: Scene, updateFn: (timestamp: number) => void, timestamp: number) {
+        //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        updateFn.bind(scene)(timestamp);
+        this.camera.update(timestamp)
 
         window.requestAnimationFrame(this.gameLoop.bind(this, scene, updateFn));
     }
@@ -72,7 +77,20 @@ export class Game {
         }
         curr.load();
 
+        // testing purpose
+        // setInterval(() => {
+        //     this.gameLoop(curr, curr.update, 0);
+        // }, 1000);
         window.requestAnimationFrame(this.gameLoop.bind(this, curr, curr.update));
         this._currentScene = curr;
+    }
+
+    public setScale(scale: number) {
+        this._scale = scale;
+        this.ctx.scale(scale, scale);
+    }
+
+    public get scale() {
+        return this._scale;
     }
 }

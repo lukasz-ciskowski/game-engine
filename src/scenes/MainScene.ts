@@ -1,34 +1,29 @@
 import { Scene } from 'controllers/Scene';
+import { Player } from 'objects/Player';
 
 export class MainScene extends Scene {
-    public z: number = 0
-
     constructor() {
         super('Main');
     }
 
     public async preload() {
-        console.log('preload');
-        this.game.ctx.scale(6, 6);
-        
+        this.game.setScale(3);
+
         const map = await this.loadTileMapJSON('/assets/tilemaps/map.json');
         await map.addTileset('tileset', '/assets/tilemaps/tiles/tileset.png');
-        
-        map.createLayer('water', 'tileset');
-        map.createLayer('terrain', 'tileset');
-         
-        this.game.camera.setPosition(60, 30)
-        const player = await this.addSprite('/assets/player/player.json');
-    }
 
-    public load() {
-        console.log('load');
-    }
-    
-    public update() {
-        super.update()
-        this.z += 0.1 
-        
-        this.game.camera.setPosition(60 + this.z, 30 + this.z)
+        map.createLayers(
+            ['water', 'terrain', 'path', 'extra-objects', 'terrain-up', 'terrain-grass', 'trees', 'fences', 'houses'],
+            'tileset',
+        );
+
+        this.game.camera.setPosition(60, 30);
+
+        const playerSprite = await this.addSprite('/assets/player/player.json');
+        playerSprite.setScale(0.3).setFrame('down-2.png');
+        const player = new Player(playerSprite);
+
+        this.game.camera.follow(playerSprite)
+        this.addController(player);
     }
 }
