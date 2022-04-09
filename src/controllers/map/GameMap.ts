@@ -14,7 +14,6 @@ export class GameMap extends BaseController {
 
     public async addTileset(name: string, src: string, scale?: number) {
         const img = await TilemapProcessor.loadTileset(src);
-        console.log(this._mapObject);
 
         const newTileset = new Tileset(img, scale, this._mapObject);
         this._tilesetImages.set(name, newTileset);
@@ -35,7 +34,7 @@ export class GameMap extends BaseController {
 
             const newLayer = new Layer(tileset.img, created);
             this._layers.push(newLayer);
-            this.game.queue.addController(newLayer);
+            this.game.currentScene?.queue.addController(newLayer);
 
             allCreatedTiles.push(...created);
         });

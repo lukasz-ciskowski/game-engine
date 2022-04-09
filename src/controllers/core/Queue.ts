@@ -4,6 +4,8 @@ export class Queue {
     private readonly _controllers: BaseController[] = [];
 
     async addController(controller: BaseController) {
+        console.log(controller);
+        
         this._controllers.push(controller);
         await controller.load();
     }

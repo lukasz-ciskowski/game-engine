@@ -4,11 +4,13 @@ import { Sprite } from 'controllers/sprite/Sprite';
 const SPEED = 1
 
 export class Player extends BaseController {
-    constructor(private readonly sprite: Sprite) {
+    constructor(private readonly _sprite: Sprite) {
         super();
     }
 
     update(timestamp: number): void {
+        this._sprite.update(timestamp)
+
         if (this.game.cursor.keyboard.w.isPressed) {
             this.game.camera.move({ y: -SPEED })
         }
@@ -21,7 +23,9 @@ export class Player extends BaseController {
         if (this.game.cursor.keyboard.d.isPressed) {
             this.game.camera.move({ x: SPEED })
         }
-        // this.game.camera.move({ x: 0.3, y: 0.3})
-        // this.sprite.move({ x: 0.1, y: 0.1 });
+    }
+
+    public get sprite() {
+        return this._sprite
     }
 }

@@ -4,7 +4,7 @@ import { SpriteData, SpriteProcessor } from 'preprocessors/SpriteProcessor';
 
 export class Sprite extends BaseController {
     private _img: HTMLImageElement;
-    private _frames: Map<string, SingleTile>;
+    private _frames: Map<string, SingleTile> = new Map();
     private _currentFrame?: SingleTile;
     private _scale: number;
 

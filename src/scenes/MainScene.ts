@@ -1,7 +1,14 @@
+import { GameMap } from 'controllers/map/GameMap';
+import { Tileset } from 'controllers/map/Tileset';
 import { Scene } from 'controllers/Scene';
+import { Sprite } from 'controllers/sprite/Sprite';
 import { Player } from 'objects/Player';
 
 export class MainScene extends Scene {
+    private _map: GameMap
+    private _player: Player
+    private _mainTileset: Tileset
+
     constructor() {
         super('Main');
     }
@@ -9,10 +16,14 @@ export class MainScene extends Scene {
     public async preload() {
         this.game.setScale(3);
 
-        const map = await this.loadTileMapJSON('/assets/tilemaps/map.json');
-        const mainSet = await map.addTileset('tileset', '/assets/tilemaps/tiles/tileset.png', 2);
+        this._map = await this.loadTileMapJSON('/assets/tilemaps/map.json');
+        this._mainTileset = await this._map.addTileset('tileset', '/assets/tilemaps/tiles/tileset.png', 2);
+        const playerSprite = await this.addSprite('/assets/player/player.json');
+        this._player = new Player(playerSprite)
+    }
 
-        map.createLayers(
+    public async load() {
+        this._map.createLayers(
             ['water', 'terrain', 'path', 'extra-objects', 'terrain-up', 'terrain-grass', 'trees', 'fences', 'houses'],
             'tileset',
         );
@@ -20,16 +31,14 @@ export class MainScene extends Scene {
         this.game.camera.setPosition(120, 40);
         this.game.camera.setBounds([
             [0, 0],
-            [mainSet.width, mainSet.height],
+            [this._mainTileset.width, this._mainTileset.height],
         ]);
 
-        const playerSprite = await this.addSprite('/assets/player/player.json');
-        playerSprite.setScale(0.4).setFrame('down-2.png');
-        const player = new Player(playerSprite);
+        this._player.sprite.setScale(0.4).setFrame('down-2.png');
+        this.queue.addController(this._player);
 
-        this.game.camera.follow(playerSprite);
-        this.game.queue.addController(player);
+        this.game.camera.follow(this._player.sprite);
 
-        map.createLayers(['collide-layers'], 'tileset');
+        this._map.createLayers(['collide-layers'], 'tileset');
     }
 }
