@@ -19,14 +19,14 @@ export class Scene extends BaseController implements IScene {
     public async loadTileMapJSON(path: string) {
         const result = await fetchJson(path);
         const map = new GameMap(result);
-        await this.addController(map);
+        await this.game.queue.addController(map);
         return map;
     }
 
     public async addSprite(path: string) {
         const result = await fetchJson(path);
         const sprite = new Sprite(result, path);
-        await this.addController(sprite);
+        await this.game.queue.addController(sprite);
         return sprite;
     }
 }

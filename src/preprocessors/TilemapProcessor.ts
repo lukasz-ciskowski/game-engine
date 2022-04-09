@@ -1,4 +1,5 @@
 import { SingleTile } from 'controllers/base/SingleTile';
+import { Tileset } from 'controllers/map/Tileset';
 import { loadImgAsync } from 'utils/imageLoader';
 
 export interface TileMapJSONData {
@@ -26,7 +27,7 @@ export class TilemapProcessor {
     public static createLayer(
         layerName: string,
         mapData: TileMapJSONData,
-        tileset: HTMLImageElement,
+        tileset: Tileset,
         toSearch: TileMapJSONLayer[],
     ): SingleTile[] {
         const layer = toSearch.find((layer) => layer.name === layerName);
@@ -43,8 +44,8 @@ export class TilemapProcessor {
 
         let heightLevel = 0;
 
-        const TILESET_W = tileset.width / mapData.tilewidth;
-        const TILESET_H = tileset.height / mapData.tileheight;
+        const TILESET_W = tileset.img.width / mapData.tilewidth;
+        const TILESET_H = tileset.img.height / mapData.tileheight;
 
         const tiles: SingleTile[] = [];
         layer.data?.forEach((point, index) => {
@@ -57,11 +58,11 @@ export class TilemapProcessor {
                             x: ((point % TILESET_W) - 1) * mapData.tilewidth,
                             y: Math.floor(point / TILESET_H) * mapData.tileheight,
                         },
-                        x: (index % mapData.width) * mapData.tilewidth,
-                        y: heightLevel * mapData.tileheight,
+                        x: (index % mapData.width) * mapData.tilewidth * tileset.scale,
+                        y: heightLevel * mapData.tileheight * tileset.scale,
                         width: mapData.tilewidth,
                         height: mapData.tileheight,
-                    }),
+                    }).setScale(tileset.scale),
                 );
             }
         });

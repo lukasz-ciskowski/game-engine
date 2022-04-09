@@ -1,6 +1,8 @@
+import { BaseController } from 'controllers/base/BaseController';
 import { Scene } from '../controllers/Scene';
 import { Camera } from './Camera';
 import { Cursor } from './Cursor';
+import { Queue } from './Queue';
 
 interface Config {
     id: string;
@@ -12,13 +14,14 @@ interface Config {
 export class Game {
     public readonly canvas: HTMLCanvasElement;
     public readonly ctx: CanvasRenderingContext2D;
-    private readonly _camera: Camera;
+    private readonly _camera: Camera = new Camera();
+    private readonly _queue = new Queue();
 
     private _scenes: Scene[];
     private _currentScene: Scene | null;
     private _scale: number = 1;
 
-    public readonly cursor = new Cursor()
+    public readonly cursor = new Cursor();
 
     private static _instance: Game;
 
@@ -61,10 +64,15 @@ export class Game {
         return this._camera;
     }
 
+    public get queue() {
+        return this._queue
+    }
+
     public gameLoop(scene: Scene, updateFn: (timestamp: number) => void, timestamp: number) {
-        //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         updateFn.bind(scene)(timestamp);
-        this.camera.update(timestamp)
+        this.camera.update(timestamp);
+        this.queue.controllers.forEach((c) => c.update(timestamp));
 
         window.requestAnimationFrame(this.gameLoop.bind(this, scene, updateFn));
     }
