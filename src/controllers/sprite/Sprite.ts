@@ -1,4 +1,5 @@
 import { BaseController } from 'controllers/base/BaseController';
+import { GameObjectProps } from 'controllers/base/GameObject';
 import { SingleTile } from 'controllers/base/SingleTile';
 import { SpriteData, SpriteProcessor } from 'preprocessors/SpriteProcessor';
 
@@ -7,6 +8,7 @@ export class Sprite extends BaseController {
     private _frames: Map<string, SingleTile> = new Map();
     private _currentFrame?: SingleTile;
     private _scale: number;
+    private _collisionBox?: GameObjectProps["collisionBox"]
 
     constructor(private readonly _spriteData: SpriteData, private readonly _dirLocation: string) {
         super();
@@ -31,6 +33,8 @@ export class Sprite extends BaseController {
         }
         this._currentFrame = frame;
         this._currentFrame.setScale(this._scale);
+        this._currentFrame.setCollisionBox(this._collisionBox)
+
         return this;
     }
 
@@ -40,23 +44,28 @@ export class Sprite extends BaseController {
     }
 
     public toMiddle() {
-        this._currentFrame
-            ?.setScale(this._scale)
-            .setPosition(
-                (this.game.canvas.width / 2 - this._currentFrame.origin.w) / this.game.scale + this.game.camera.x,
-                (this.game.canvas.height / 2 - this._currentFrame.origin.h) / this.game.scale + this.game.camera.y,
-            );
-        return this;
+        return this._currentFrame?.setPosition(
+            (this.game.canvas.width / 2 - this._currentFrame.origin.w) / this.game.scale + this.game.camera.x,
+            (this.game.canvas.height / 2 - this._currentFrame.origin.h) / this.game.scale + this.game.camera.y,
+        );
+    }
+
+    public setPosition(x: number, y: number) {
+        return this._currentFrame?.setPosition(x, y);
     }
 
     update(timestamp: number): void {
+        this.currentFrame?.update(timestamp)
         this._currentFrame?.drawTile(this._img);
     }
 
-    public move(axis: { x?: number; y?: number }) {
-        this._currentFrame?.setPosition(
-            this._currentFrame.object.x + (axis.x || 0),
-            this._currentFrame.object.y + (axis.y || 0),
-        );
+    public get currentFrame() {
+        return this._currentFrame;
+    }
+
+    public setCollisionBox(props: GameObjectProps["collisionBox"]) {
+        this._collisionBox = props
+        this._currentFrame?.setCollisionBox(props)
+        return this
     }
 }

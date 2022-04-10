@@ -26,6 +26,9 @@ export class Camera extends BaseController {
     }
 
     public move(obj: { x?: number; y?: number }) {
+        const prevX = this._x
+        const prevY = this._y
+
         const nextX = this._x + (obj.x || 0);
         const nextY = this._y + (obj.y || 0);
 
@@ -36,6 +39,11 @@ export class Camera extends BaseController {
 
         this._x = nextX;
         this._y = nextY;
+        const ableToMove = this._followSprites.every(f => f.toMiddle())
+        if (!ableToMove) {
+            this._x = prevX
+            this._y = prevY
+        }
     }
 
     public follow(sprite: Sprite) {
@@ -44,9 +52,5 @@ export class Camera extends BaseController {
 
     public setBounds(b: [[number, number], [number, number]]) {
         this._bounds = b;
-    }
-
-    update(timestamp: number): void {
-        this._followSprites.forEach((f) => f.toMiddle());
     }
 }

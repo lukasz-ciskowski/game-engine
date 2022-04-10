@@ -10,16 +10,10 @@ interface TileProps extends GameObjectProps {
 
 export class SingleTile extends GameObject {
     public readonly cropProps: TileProps['crop'];
-    private _scale: number = 1;
 
     constructor(props: TileProps) {
         super({ x: props.x, y: props.y, width: props.width, height: props.height });
         this.cropProps = props.crop;
-    }
-
-    public setScale(scale: number) {
-        this._scale = scale;
-        return this
     }
 
     public drawTile(img: HTMLImageElement) {
@@ -27,12 +21,12 @@ export class SingleTile extends GameObject {
             img,
             this.cropProps.x,
             this.cropProps.y,
-            this.object.width,
-            this.object.height,
-            this.object.x - this.game.camera.x,
-            this.object.y - this.game.camera.y,
-            this.object.width * this._scale,
-            this.object.height * this._scale,
+            this._object.width,
+            this._object.height,
+            this._object.x - this.game.camera.x,
+            this._object.y - this.game.camera.y,
+            this._object.width * this.scale,
+            this._object.height * this.scale,
         );
     }
 }
