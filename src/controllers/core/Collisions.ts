@@ -1,23 +1,30 @@
 import { GameObject } from 'controllers/base/GameObject';
+import { Sprite } from 'controllers/sprite/Sprite';
+
+type CollisionsTuple = [(GameObject | Sprite)[], (GameObject | Sprite)[]]
 
 export class Collisions {
-    private readonly collisions: [GameObject[], GameObject[]][] = [];
+    private readonly collisions: CollisionsTuple[] = [];
 
     constructor() {}
 
-    public addCollisions(object1: GameObject[], object2: GameObject[]) {
-        this.collisions.push([object1, object2]);
+    public addCollisions(tuple: CollisionsTuple) {
+        this.collisions.push(tuple);
     }
 
     public isColliding(newX: number, newY: number, collideObj: GameObject) {
         let anyColliding = false;
-        this.collisions.forEach(([source, target]) => {
-            const verifyWith = target.find((c) => c === collideObj);
+        this.collisions.forEach(([source, target]) => {            
+            const verifyWith = target.map(this.getCollidingObject).find((c) => c === collideObj);
             if (!verifyWith) return
+            console.log(verifyWith);
+            
             
 
             verifyWith.setColliding(false)
-            source.forEach((s) => {
+            source.map(this.getCollidingObject).forEach((s) => {
+                if (!s) return
+
                 const vCollision = verifyWith.getCollisionPos(newX, newY)
                 const sCollision = s.getCollisionPos(s.pos.x, s.pos.y)
 
@@ -35,5 +42,10 @@ export class Collisions {
         });
 
         return anyColliding;
+    }
+
+    private getCollidingObject(obj: GameObject | Sprite | undefined): GameObject | undefined {
+        if (obj instanceof Sprite && obj) return obj.currentFrame
+        return obj
     }
 }

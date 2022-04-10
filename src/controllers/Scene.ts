@@ -45,23 +45,7 @@ export class Scene extends BaseController implements IScene {
         this.queue.controllers.forEach((q) => q.update(timestamp));
     }
 
-    public addCollisions(obj1: (SingleTile | Sprite)[], obj2: (SingleTile | Sprite)[]) {
-        let collidingObj1: GameObject[] = [];
-        let collidingObj2: GameObject[] = [];
-
-        obj1.forEach((e) => {
-            if (e instanceof SingleTile) return collidingObj1.push(e);
-            if (e instanceof Sprite && e.currentFrame) return collidingObj1.push(e.currentFrame);
-        });
-        obj2.forEach((e) => {
-            if (e instanceof SingleTile) return collidingObj2.push(e);
-            if (e instanceof Sprite && e.currentFrame) return collidingObj2.push(e.currentFrame);
-        });
-
-        this._collisions.addCollisions(collidingObj1, collidingObj2)
-    }
-
     public get collisions() {
-        return this._collisions
+        return this._collisions;
     }
 }

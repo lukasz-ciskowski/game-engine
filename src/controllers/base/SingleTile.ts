@@ -12,7 +12,7 @@ export class SingleTile extends GameObject {
     public readonly cropProps: TileProps['crop'];
 
     constructor(props: TileProps) {
-        super({ x: props.x, y: props.y, width: props.width, height: props.height });
+        super(props);
         this.cropProps = props.crop;
     }
 

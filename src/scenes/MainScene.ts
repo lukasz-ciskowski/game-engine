@@ -19,6 +19,7 @@ export class MainScene extends Scene {
         this._mainTileset = await this._map.addTileset('tileset', '/assets/tilemaps/tiles/tileset.png', 2);
 
         const playerSprite = await this.addSprite('/assets/player/player.json');
+        playerSprite.setScale(0.4).setCollisionBox({ x: 5, y: 15, width: 12, height: 12 });
         this._player = new Player(playerSprite);
     }
 
@@ -34,11 +35,7 @@ export class MainScene extends Scene {
             [this._mainTileset.width, this._mainTileset.height],
         ]);
 
-        this._player.sprite
-            .setScale(0.4)
-            .setFrame('down-2.png')
-            .setCollisionBox({ x: 5, y: 15, width: 12, height: 12 })
-            .toMiddle();
+        this._player.sprite.toMiddle();
         this.queue.addController(this._player);
 
         this.game.camera.follow(this._player.sprite);
@@ -46,6 +43,6 @@ export class MainScene extends Scene {
         const collisions = this._map.createLayers(['collisions'], 'tileset');
         this._map.createLayers(['collide-layers'], 'tileset');
 
-        if (collisions) this.addCollisions(collisions, [this._player.sprite]);
+        if (collisions) this.collisions.addCollisions([collisions, [this._player.sprite]]);
     }
 }

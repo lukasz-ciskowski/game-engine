@@ -40,6 +40,7 @@ export class Camera extends BaseController {
         this._x = nextX;
         this._y = nextY;
         const ableToMove = this._followSprites.every(f => f.toMiddle())
+        
         if (!ableToMove) {
             this._x = prevX
             this._y = prevY

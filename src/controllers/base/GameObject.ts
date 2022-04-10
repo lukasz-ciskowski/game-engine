@@ -11,11 +11,11 @@ export interface GameObjectProps {
         width?: number;
         height?: number;
     };
+    scale?: number
 }
 
 export class GameObject extends BaseController {
     private _isColliding: false | GameObject = false;
-    private _scale: number = 1;
 
     constructor(public readonly _object: GameObjectProps) {
         super();
@@ -33,8 +33,8 @@ export class GameObject extends BaseController {
 
     public get origin() {
         return {
-            w: (this._object.width * this._scale) / 2,
-            h: (this._object.height * this._scale) / 2,
+            w: (this._object.width * this.scale) / 2,
+            h: (this._object.height * this.scale) / 2,
         };
     }
 
@@ -47,7 +47,7 @@ export class GameObject extends BaseController {
     }
 
     public get pos() {
-        return { ...this._object, width: this._object.width * this._scale, height: this._object.height * this._scale };
+        return { ...this._object, width: this._object.width * this.scale, height: this._object.height * this.scale };
     }
 
     public getCollisionPos(relatedX: number, relatedY: number) {
@@ -65,7 +65,7 @@ export class GameObject extends BaseController {
     }
 
     public setScale(scale: number) {
-        this._scale = scale;
+        this._object.scale = scale;
         return this;
     }
 
@@ -74,6 +74,6 @@ export class GameObject extends BaseController {
     }
 
     public get scale() {
-        return this._scale;
+        return this._object.scale || 1;
     }
 }
