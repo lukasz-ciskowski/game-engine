@@ -1,5 +1,5 @@
 import { BaseController } from 'controllers/base/BaseController';
-import { Sprite } from 'controllers/sprite/Sprite';
+import { SpriteObject } from 'controllers/sprite/SpriteObject';
 
 export class Camera extends BaseController {
     private _x: number = 0;
@@ -10,7 +10,7 @@ export class Camera extends BaseController {
         [0, 0],
     ];
 
-    private _followSprites: Sprite[] = [];
+    private _followSprites: SpriteObject[] = [];
 
     public setPosition(x: number, y: number) {
         this._x = x;
@@ -39,7 +39,7 @@ export class Camera extends BaseController {
 
         this._x = nextX;
         this._y = nextY;
-        const ableToMove = this._followSprites.every(f => f.toMiddle())
+        const ableToMove = this._followSprites.every(f => f.move(obj.x || 0, obj.y || 0))
         
         if (!ableToMove) {
             this._x = prevX
@@ -47,7 +47,7 @@ export class Camera extends BaseController {
         }
     }
 
-    public follow(sprite: Sprite) {
+    public follow(sprite: SpriteObject) {
         this._followSprites.push(sprite);
     }
 

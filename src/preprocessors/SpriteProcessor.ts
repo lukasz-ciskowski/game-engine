@@ -1,4 +1,5 @@
 import { SingleTile } from 'controllers/base/SingleTile';
+import { Frame } from 'controllers/sprite/helpers/Frame';
 import path from 'path';
 import { loadImgAsync } from 'utils/imageLoader';
 
@@ -26,19 +27,15 @@ export class SpriteProcessor {
         return await loadImgAsync(path.join(dir, spriteData.meta.image));
     }
 
-    public static getFrames(data: SpriteData): Map<string, SingleTile> {
-        return Object.entries(data.frames).reduce<Map<string, SingleTile>>((acc, [frame, data]) => {
+    public static getFrames(data: SpriteData): Map<string, Frame> {
+        return Object.entries(data.frames).reduce<Map<string, Frame>>((acc, [frame, data]) => {
             acc.set(
                 frame,
-                new SingleTile({
-                    crop: {
-                        x: data.frame.x,
-                        y: data.frame.y,
-                    },
-                    x: 0,
-                    y: 0,
-                    width: data.frame.w,
-                    height: data.frame.h,
+                new Frame({
+                    x: data.frame.x,
+                    y: data.frame.y,
+                    w: data.frame.w,
+                    h: data.frame.h,
                 }),
             );
             return acc;

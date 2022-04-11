@@ -1,7 +1,6 @@
 import { GameObject } from 'controllers/base/GameObject';
-import { Sprite } from 'controllers/sprite/Sprite';
 
-type CollisionsTuple = [(GameObject | Sprite)[], (GameObject | Sprite)[]]
+type CollisionsTuple = [GameObject[], GameObject[]]
 
 export class Collisions {
     private readonly collisions: CollisionsTuple[] = [];
@@ -15,14 +14,11 @@ export class Collisions {
     public isColliding(newX: number, newY: number, collideObj: GameObject) {
         let anyColliding = false;
         this.collisions.forEach(([source, target]) => {            
-            const verifyWith = target.map(this.getCollidingObject).find((c) => c === collideObj);
+            const verifyWith = target.find((c) => c === collideObj);
             if (!verifyWith) return
-            console.log(verifyWith);
-            
-            
 
             verifyWith.setColliding(false)
-            source.map(this.getCollidingObject).forEach((s) => {
+            source.forEach((s) => {
                 if (!s) return
 
                 const vCollision = verifyWith.getCollisionPos(newX, newY)
@@ -42,10 +38,5 @@ export class Collisions {
         });
 
         return anyColliding;
-    }
-
-    private getCollidingObject(obj: GameObject | Sprite | undefined): GameObject | undefined {
-        if (obj instanceof Sprite && obj) return obj.currentFrame
-        return obj
     }
 }

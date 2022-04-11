@@ -11,7 +11,7 @@ export interface GameObjectProps {
         width?: number;
         height?: number;
     };
-    scale?: number
+    scale?: number;
 }
 
 export class GameObject extends BaseController {
@@ -29,6 +29,10 @@ export class GameObject extends BaseController {
         this._object.y = y;
 
         return true;
+    }
+
+    public move(moveX: number, moveY: number) {
+        return this.setPosition(this._object.x + moveX, this._object.y + moveY);
     }
 
     public get origin() {
@@ -53,8 +57,8 @@ export class GameObject extends BaseController {
     public getCollisionPos(relatedX: number, relatedY: number) {
         const x = relatedX + (this._object.collisionBox?.x || 0);
         const y = relatedY + (this._object.collisionBox?.y || 0);
-        const width = this._object.collisionBox?.width || this.pos.width;
-        const height = this._object.collisionBox?.height || this.pos.height;
+        const width = this._object.collisionBox?.width || this.pos.width - 1;
+        const height = this._object.collisionBox?.height || this.pos.height - 1;
 
         return {
             x,
@@ -71,6 +75,11 @@ export class GameObject extends BaseController {
 
     public setCollisionBox(params: GameObjectProps['collisionBox']) {
         this._object.collisionBox = params;
+    }
+
+    public setSize(size: { width: number; height: number }) {
+        this._object.width = size.width;
+        this._object.height = size.height;
     }
 
     public get scale() {

@@ -9,11 +9,15 @@ interface TileProps extends GameObjectProps {
 }
 
 export class SingleTile extends GameObject {
-    public readonly cropProps: TileProps['crop'];
+    protected cropProps: TileProps['crop'];
 
-    constructor(props: TileProps) {
+    constructor({ crop, ...props }: TileProps) {
         super(props);
-        this.cropProps = props.crop;
+        this.cropProps = crop;
+    }
+
+    public setCrop(crop: TileProps['crop']) {
+        this.cropProps = crop
     }
 
     public drawTile(img: HTMLImageElement) {

@@ -1,11 +1,9 @@
 import { fetchJson } from 'utils/jsonReader';
 import { BaseController, IController } from './base/BaseController';
-import { GameObject } from './base/GameObject';
-import { SingleTile } from './base/SingleTile';
 import { Collisions } from './core/Collisions';
 import { Queue } from './core/Queue';
 import { GameMap } from './map/GameMap';
-import { Sprite } from './sprite/Sprite';
+import { SpriteObject } from './sprite/SpriteObject';
 
 interface IScene extends IController {
     preload(): Promise<void> | void;
@@ -36,7 +34,7 @@ export class Scene extends BaseController implements IScene {
 
     public async addSprite(path: string) {
         const result = await fetchJson(path);
-        const sprite = new Sprite(result, path);
+        const sprite = new SpriteObject(result, path);
         await sprite.load();
         return sprite;
     }
