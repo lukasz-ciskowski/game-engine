@@ -19,7 +19,7 @@ export class MainScene extends Scene {
         this._mainTileset = await this._map.addTileset('tileset', '/assets/tilemaps/tiles/tileset.png', 2);
 
         const playerSprite = await this.addSprite('/assets/player/player.json');
-        playerSprite.setScale(0.4).setCollisionBox({ x: 5, y: 15, width: 12, height: 12 });
+        playerSprite.setScale(0.4).setCollisionBox({ x: 4, y: 10, width: 12, height: 17 });
         this._player = new Player(playerSprite);
     }
 
