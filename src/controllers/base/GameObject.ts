@@ -38,8 +38,8 @@ export class GameObject extends BaseController {
 
     public get origin() {
         return {
-            w: (this._object.width * this.scale) / 2,
-            h: (this._object.height * this.scale) / 2,
+            w: (this._object.width * this.scale * this.game.scale) / 2,
+            h: (this._object.height * this.scale * this.game.scale) / 2,
         };
     }
 

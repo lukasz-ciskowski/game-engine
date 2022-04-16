@@ -34,7 +34,6 @@ export class Animator {
 
         
         this.current.duration += 100 * timestamp;
-        console.log(this.current.duration);
         if (this._current && this._current.config.speed && this.current.duration > this._current.config.speed) {
             this._current.index =
                 this._current.config.frames.length <= this._current.index + 1 ? 0 : this._current.index + 1;
