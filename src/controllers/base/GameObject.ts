@@ -16,6 +16,7 @@ export interface GameObjectProps {
 
 export class GameObject extends BaseController {
     private _isColliding: false | GameObject = false;
+    protected _hasCollidingProp: boolean = false
 
     constructor(public readonly _object: GameObjectProps) {
         super();
@@ -44,6 +45,10 @@ export class GameObject extends BaseController {
 
     public setColliding(collided: false | GameObject) {
         this._isColliding = collided;
+    }
+
+    public setCollidingProp() {
+        this._hasCollidingProp = true
     }
 
     public get isColliding() {

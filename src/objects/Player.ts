@@ -1,7 +1,7 @@
 import { BaseController } from 'controllers/base/BaseController';
 import { SpriteObject } from 'controllers/sprite/SpriteObject';
 
-const SPEED = 1;
+const SPEED = 120;
 
 export class Player extends BaseController {
     constructor(private readonly _sprite: SpriteObject) {
@@ -36,16 +36,16 @@ export class Player extends BaseController {
 
         if (this.game.cursor.keyboard.w.isPressed) {
             this.sprite.playAnimation('move-up');
-            this.game.camera.move({ y: -SPEED });
+            this.game.camera.move({ y: -SPEED * timestamp });
         } else if (this.game.cursor.keyboard.s.isPressed) {
             this.sprite.playAnimation('move-down');
-            this.game.camera.move({ y: SPEED });
+            this.game.camera.move({ y: SPEED * timestamp });
         } else if (this.game.cursor.keyboard.a.isPressed) {
             this.sprite.playAnimation('move-left');
-            this.game.camera.move({ x: -SPEED });
+            this.game.camera.move({ x: -SPEED * timestamp });
         } else if (this.game.cursor.keyboard.d.isPressed) {
             this.sprite.playAnimation('move-right');
-            this.game.camera.move({ x: SPEED });
+            this.game.camera.move({ x: SPEED * timestamp });
         } else {
             const lastFrame = this.sprite.animator.current?.frame.split('-')?.[0];
 

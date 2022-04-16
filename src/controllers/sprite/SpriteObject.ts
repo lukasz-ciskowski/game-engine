@@ -65,7 +65,7 @@ export class SpriteObject extends SingleTile {
     update(timestamp: number): void {
         this.drawTile(this._img);
 
-        const nextAnimator = this._animator.play();
+        const nextAnimator = this._animator.play(timestamp);
         if (!nextAnimator) return;
         this.setFrame(nextAnimator.frame);
     }

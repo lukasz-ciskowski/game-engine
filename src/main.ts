@@ -7,5 +7,6 @@ window.addEventListener('load', () => {
         width: 1024,
         height: 700,
         scenes: [MainScene],
+        debug: true
     });
 });

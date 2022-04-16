@@ -29,15 +29,17 @@ export class Animator {
         return this._current;
     }
 
-    public play() {
+    public play(timestamp: number) {
         if (!this.current?.config.speed) return null;
 
-        this.current.duration++;
-        if (this._current && this._current.config.speed && this.current.duration % this._current.config.speed === 0) {
+        
+        this.current.duration += 100 * timestamp;
+        console.log(this.current.duration);
+        if (this._current && this._current.config.speed && this.current.duration > this._current.config.speed) {
             this._current.index =
                 this._current.config.frames.length <= this._current.index + 1 ? 0 : this._current.index + 1;
             this._current.frame = this._current.config.frames[this._current.index];
-            this._current.duration += this.current?.config.speed || 0;
+            this._current.duration = 0;
             return this._current;
         }
     }

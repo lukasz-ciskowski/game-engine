@@ -8,16 +8,20 @@ interface Config {
     width: number;
     height: number;
     scenes: typeof Scene[];
+    debug?: boolean
 }
 
 export class Game {
     public readonly canvas: HTMLCanvasElement;
     public readonly ctx: CanvasRenderingContext2D;
     private readonly _camera: Camera = new Camera();
+    public readonly debug: boolean = false
 
     private _scenes: Scene[];
     private _currentScene: Scene | null;
     private _scale: number = 1;
+
+    private _oldTimeStamp = 0;
 
     public readonly cursor = new Cursor();
 
@@ -46,6 +50,7 @@ export class Game {
 
         this.canvas = canvas;
         this.ctx = ctx;
+        this.debug = config.debug || false
 
         this.canvas.width = config.width;
         this.canvas.height = config.height;
@@ -63,9 +68,12 @@ export class Game {
     }
 
     public gameLoop(scene: Scene, updateFn: (timestamp: number) => void, timestamp: number) {
+        const secondsPassed = (timestamp - this._oldTimeStamp) / 1000;
+        this._oldTimeStamp = timestamp;
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        updateFn.bind(scene)(timestamp);
-        this.camera.update(timestamp);
+        updateFn.bind(scene)(secondsPassed);
+        this.camera.update(secondsPassed);
 
         window.requestAnimationFrame(this.gameLoop.bind(this, scene, updateFn));
     }
