@@ -45,7 +45,6 @@ export class TilemapProcessor {
         let heightLevel = 0;
 
         const TILESET_W = tileset.img.width / mapData.tilewidth;
-        const TILESET_H = tileset.img.height / mapData.tileheight;
 
         const tiles: SingleTile[] = [];
         layer.data?.forEach((point, index) => {
@@ -55,8 +54,8 @@ export class TilemapProcessor {
                 tiles.push(
                     new SingleTile({
                         crop: {
-                            x: ((point % TILESET_W) - 1) * mapData.tilewidth,
-                            y: Math.floor(point / TILESET_H) * mapData.tileheight,
+                            x: ((point - 1) % TILESET_W) * mapData.tilewidth,
+                            y: Math.floor((point - 1) / TILESET_W) * mapData.tileheight,
                         },
                         x: (index % mapData.width) * mapData.tilewidth * tileset.scale,
                         y: heightLevel * mapData.tileheight * tileset.scale,

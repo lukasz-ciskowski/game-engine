@@ -2,9 +2,14 @@ import { BaseController } from 'controllers/base/BaseController';
 import { SpriteObject } from 'controllers/sprite/SpriteObject';
 
 const SPEED = 120;
-const WALKING_SPEED = 15
+const WALKING_SPEED = 15;
 
 export class Player extends BaseController {
+    private static _instance: Player;
+    public static get instance() {
+        return this._instance;
+    }
+
     constructor(private readonly _sprite: SpriteObject) {
         super();
         this._sprite.animator.add('idle-down', { frames: ['down-1.png'] });
@@ -30,6 +35,7 @@ export class Player extends BaseController {
         });
 
         this._sprite.playAnimation('idle-down');
+        Player._instance = this;
     }
 
     update(timestamp: number): void {
@@ -57,7 +63,7 @@ export class Player extends BaseController {
             const lastFrame = this.sprite.animator.current?.frame.split('-')?.[0];
             this.sprite.playAnimation(`idle-${lastFrame || 'down'}`);
         } else {
-            this.sprite.playAnimation(direction)
+            this.sprite.playAnimation(direction);
         }
     }
 

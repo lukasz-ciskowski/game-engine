@@ -8,14 +8,16 @@ interface Config {
     width: number;
     height: number;
     scenes: typeof Scene[];
-    debug?: boolean
+    debug?: boolean;
 }
 
 export class Game {
     public readonly canvas: HTMLCanvasElement;
     public readonly ctx: CanvasRenderingContext2D;
     private readonly _camera: Camera = new Camera();
-    public readonly debug: boolean = false
+    private _animationFrame: number | null = null;
+
+    public readonly debug: boolean = false;
 
     private _scenes: Scene[];
     private _currentScene: Scene | null;
@@ -50,7 +52,7 @@ export class Game {
 
         this.canvas = canvas;
         this.ctx = ctx;
-        this.debug = config.debug || false
+        this.debug = config.debug || false;
 
         this.canvas.width = config.width;
         this.canvas.height = config.height;
@@ -68,10 +70,13 @@ export class Game {
     }
 
     public gameLoop(scene: Scene, updateFn: (timestamp: number) => void, timestamp: number) {
+        if (scene.name !== this.currentScene?.name) return
+
+        this.clearScene()
+    
         const secondsPassed = (timestamp - this._oldTimeStamp) / 1000;
         this._oldTimeStamp = timestamp;
 
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         updateFn.bind(scene)(secondsPassed);
         this.camera.update(secondsPassed);
 
@@ -79,22 +84,30 @@ export class Game {
     }
 
     public loadScene(name: string) {
+        this.currentScene?.unload();
+
+        if (this._animationFrame) {
+            window.cancelAnimationFrame(this._animationFrame);
+        }
+
         const curr = this._scenes.find((s) => s.name === name);
         if (!curr) {
             console.error('Failed loading scene');
             return;
         }
         this._currentScene = curr;
-        curr.load();
 
         // testing purpose
         // setInterval(() => {
         //     this.gameLoop(curr, curr.update, 0);
         // }, 1000);
-        window.requestAnimationFrame(this.gameLoop.bind(this, curr, curr.update));
+        this._animationFrame = window.requestAnimationFrame(this.gameLoop.bind(this, curr, curr.update));
+        curr.load();
     }
 
     public setScale(scale: number) {
+        this.ctx.scale(1 / this.scale, 1 / this.scale);
+
         this._scale = scale;
         this.ctx.scale(scale, scale);
     }
@@ -104,6 +117,13 @@ export class Game {
     }
 
     public get currentScene() {
-        return this._currentScene
+        return this._currentScene;
+    }
+
+    private clearScene() {
+        this.ctx.beginPath();
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+        this.ctx.rect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fill();
     }
 }

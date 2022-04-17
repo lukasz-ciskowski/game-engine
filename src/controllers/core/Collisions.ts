@@ -3,18 +3,18 @@ import { GameObject } from 'controllers/base/GameObject';
 type CollisionsTuple = [GameObject[], GameObject[]];
 
 export class Collisions {
-    private readonly collisions: CollisionsTuple[] = [];
+    private _collisions: CollisionsTuple[] = [];
 
     constructor() {}
 
     public addCollisions(tuple: CollisionsTuple) {
         tuple.flat().forEach((t) => t.setCollidingProp());
-        this.collisions.push(tuple);
+        this._collisions.push(tuple);
     }
 
     public isColliding(newX: number, newY: number, collideObj: GameObject) {
         let anyColliding = false;
-        this.collisions.forEach(([source, target]) => {
+        this._collisions.forEach(([source, target]) => {
             const verifyWith = target.find((c) => c === collideObj);
             if (!verifyWith) return;
 
@@ -22,6 +22,7 @@ export class Collisions {
             source.forEach((s) => {
                 if (!s) return;
 
+                s.setColliding(false);
                 const vCollision = verifyWith.getCollisionPos(newX, newY);
                 const sCollision = s.getCollisionPos(s.pos.x, s.pos.y);
 
@@ -39,5 +40,11 @@ export class Collisions {
         });
 
         return anyColliding;
+    }
+
+    public clear() {
+        // clear current state of collisions
+        this._collisions.flat().forEach((c) => c.forEach((el) => el.setColliding(false)));
+        this._collisions = [];
     }
 }

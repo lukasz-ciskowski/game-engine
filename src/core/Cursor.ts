@@ -1,6 +1,6 @@
 import { BaseController } from 'controllers/base/BaseController';
 
-type Keyboard = Record<'w' | 'a' | 's' | 'd', Event>;
+type Keyboard = Record<'w' | 'a' | 's' | 'd' | 'e', Event>;
 
 interface Event {
     isPressed: boolean;
@@ -11,6 +11,7 @@ const DEFAULT: Keyboard = {
     a: { isPressed: false },
     s: { isPressed: false },
     d: { isPressed: false },
+    e: { isPressed: false },
 };
 
 export class Cursor extends BaseController {

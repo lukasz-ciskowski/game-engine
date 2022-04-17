@@ -1,9 +1,9 @@
 import { BaseController } from 'controllers/base/BaseController';
 
 export class Queue {
-    private readonly _controllers: BaseController[] = [];
+    private _controllers: BaseController[] = [];
 
-    async addController(controller: BaseController) {        
+    async addController(controller: BaseController) {
         this._controllers.push(controller);
         await controller.load();
     }
@@ -15,5 +15,9 @@ export class Queue {
 
     public get controllers() {
         return this._controllers;
+    }
+
+    public clear() {
+        this._controllers = [];
     }
 }

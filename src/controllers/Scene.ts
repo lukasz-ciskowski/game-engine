@@ -7,6 +7,7 @@ import { SpriteObject } from './sprite/SpriteObject';
 
 interface IScene extends IController {
     preload(): Promise<void> | void;
+    unload(): Promise<void> | void;
 }
 
 export class Scene extends BaseController implements IScene {
@@ -18,6 +19,12 @@ export class Scene extends BaseController implements IScene {
     }
 
     public preload(): void {
+        return;
+    }
+
+    public unload(): void {
+        this.queue.clear();
+        this._collisions.clear();
         return;
     }
 
@@ -40,6 +47,8 @@ export class Scene extends BaseController implements IScene {
     }
 
     public update(timestamp: number): void {
+        if (this.game.currentScene !== this) return;
+
         this.queue.controllers.forEach((q) => q.update(timestamp));
     }
 

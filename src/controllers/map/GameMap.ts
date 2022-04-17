@@ -13,6 +13,11 @@ export class GameMap extends BaseController {
     }
 
     public async addTileset(name: string, src: string, scale?: number) {
+        const existingTileset = this._tilesetImages.get(name);
+        if (existingTileset) {
+            return existingTileset;
+        }
+
         const img = await TilemapProcessor.loadTileset(src);
 
         const newTileset = new Tileset(img, scale, this._mapObject);
@@ -24,7 +29,7 @@ export class GameMap extends BaseController {
         const tileset = this._tilesetImages.get(tilesetName);
         if (!tileset) {
             console.error('No tileset found');
-            return;
+            return [];
         }
 
         const allCreatedTiles: SingleTile[] = [];
@@ -40,5 +45,9 @@ export class GameMap extends BaseController {
         });
 
         return allCreatedTiles;
+    }
+
+    public clearLayers() {
+        this._layers = [];
     }
 }
