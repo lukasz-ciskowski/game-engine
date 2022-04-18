@@ -1,12 +1,12 @@
 import { SingleTile } from 'controllers/base/SingleTile';
-import { Animator } from 'controllers/core/Animator';
+import { SpriteAnimator } from 'controllers/core/SpriteAnimator';
 import { SpriteData, SpriteProcessor } from 'preprocessors/SpriteProcessor';
 import { Frame } from './helpers/Frame';
 
 export class SpriteObject extends SingleTile {
     private _frames: Map<string, Frame> = new Map();
     private _img: HTMLImageElement;
-    private _animator = new Animator();
+    private _animator = new SpriteAnimator();
 
     constructor(private readonly _spriteData: SpriteData, private readonly _dirLocation: string) {
         // there is no frame in the beginning so there is no position at start
@@ -34,7 +34,7 @@ export class SpriteObject extends SingleTile {
     }
 
     public playAnimation(animationName: string) {
-        const animation = this._animator.setup(animationName);
+        const animation = this._animator.setupFrames(animationName);
         if (!animation) {
             return this;
         }
@@ -65,7 +65,7 @@ export class SpriteObject extends SingleTile {
     update(timestamp: number): void {
         this.drawTile(this._img);
 
-        const nextAnimator = this._animator.play(timestamp);
+        const nextAnimator = this._animator.playFrame(timestamp);
         if (!nextAnimator) return;
         this.setFrame(nextAnimator.frame);
     }

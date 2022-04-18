@@ -10,6 +10,7 @@ export class HouseEntry extends BaseController {
     update(timestamp: number): void {
         if (this.game.cursor.keyboard.e.isPressed) {
             if (this._triggers.some((t) => t.isColliding === Player.instance.sprite)) {
+                Player.instance.setLastScenePos(Player.instance.sprite.object.x, Player.instance.sprite.object.y);
                 this.game.loadScene(this._sceneToLoad);
             }
         }

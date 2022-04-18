@@ -1,8 +1,10 @@
+import { loadImgAsync } from 'utils/imageLoader';
 import { fetchJson } from 'utils/jsonReader';
 import { BaseController, IController } from './base/BaseController';
 import { Collisions } from './core/Collisions';
 import { Queue } from './core/Queue';
 import { GameMap } from './map/GameMap';
+import { MapImage, MapImageProps } from './map/MapImage';
 import { SpriteObject } from './sprite/SpriteObject';
 
 interface IScene extends IController {
@@ -44,6 +46,13 @@ export class Scene extends BaseController implements IScene {
         const sprite = new SpriteObject(result, path);
         await sprite.load();
         return sprite;
+    }
+
+    public async addImage(path: string, props: MapImageProps) {
+        const result = await loadImgAsync(path);
+        const newImage = new MapImage(result, props);
+
+        return newImage;
     }
 
     public update(timestamp: number): void {
