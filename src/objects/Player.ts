@@ -7,6 +7,7 @@ const WALKING_DELAY = 15;
 export class Player extends BaseController {
     private static _instance: Player;
     private static _lastSavedPosInScene: Map<string, { x: number; y: number }> = new Map();
+    private _canMove: boolean = true
 
     public static get instance() {
         return this._instance;
@@ -41,6 +42,11 @@ export class Player extends BaseController {
     }
 
     update(timestamp: number): void {
+        if (!this._canMove) {
+            this.playWalkingAnimation()
+            return
+        }
+
         if (this.game.cursor.keyboard.w.isPressed) {
             this.playWalkingAnimation('move-up');
             this.game.camera.move({ y: -SPEED * timestamp });
@@ -84,5 +90,9 @@ export class Player extends BaseController {
         const cameraRelatedPosY = y - this.game.canvas.height / this.game.scale / 2 + this._sprite.pos.height / 2;
 
         Player._lastSavedPosInScene.set(currScene, { x: cameraRelatedPosX, y: cameraRelatedPosY });
+    }
+
+    public setIsMoving(movingFlag: boolean) {
+        this._canMove = movingFlag
     }
 }

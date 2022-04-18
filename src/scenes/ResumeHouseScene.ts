@@ -5,7 +5,6 @@ import { Scene } from 'controllers/Scene';
 import { HelperQuestionmark } from 'objects/HelperQuestionmark';
 import { HouseEntry } from 'objects/HouseEntry';
 import { Player } from 'objects/Player';
-import { GameCache } from './cache/GameCache';
 
 export class ResumeHouseScene extends Scene {
     private _map: GameMap;
@@ -24,10 +23,11 @@ export class ResumeHouseScene extends Scene {
     }
 
     public async load() {
-        this._player = GameCache.player;
+        this._player = Player.instance;
         this._map.createLayers(['floor'], 'indoor');
         const collisions = this._map.createLayers(['furniture', 'walls'], 'indoor');
         const doors = this._map.createLayers(['door'], 'indoor');
+        const shelfes = this._map.createLayers(['shelfes'], 'indoor');
 
         this.queue.addController(this._player.sprite);
 
@@ -38,10 +38,10 @@ export class ResumeHouseScene extends Scene {
         ]);
         this._player.sprite.toMiddle();
 
-        this.collisions.addCollisions([[...collisions, ...doors], [this._player.sprite]]);
+        this.collisions.addCollisions([[...collisions, ...doors, ...shelfes], [this._player.sprite]]);
         this.queue.addController(new HouseEntry(doors, 'Main'));
         this.queue.addController(this._questionMark);
         this.queue.addController(this._player);
-        this.queue.addController(new HelperQuestionmark(this._questionMark));
+        this.queue.addController(new HelperQuestionmark(this._questionMark, shelfes));
     }
 }

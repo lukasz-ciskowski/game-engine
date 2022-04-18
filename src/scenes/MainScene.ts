@@ -3,7 +3,6 @@ import { Tileset } from 'controllers/map/Tileset';
 import { Scene } from 'controllers/Scene';
 import { HouseEntry } from 'objects/HouseEntry';
 import { Player } from 'objects/Player';
-import { GameCache } from './cache/GameCache';
 
 export class MainScene extends Scene {
     private _map: GameMap;
@@ -20,7 +19,7 @@ export class MainScene extends Scene {
     }
 
     public async load() {
-        this._player = GameCache.player;
+        this._player = Player.instance;
 
         this._map.createLayers(
             ['water', 'terrain', 'path', 'extra-objects', 'terrain-up', 'terrain-grass', 'trees', 'fences', 'houses'],
