@@ -1,4 +1,5 @@
 import { TileMapJSONData, TilemapProcessor } from 'preprocessors/TilemapProcessor';
+import { FileNames } from 'types/config';
 import { BaseController } from '../base/BaseController';
 import { SingleTile } from '../base/SingleTile';
 import { Layer } from './Layer';
@@ -12,13 +13,14 @@ export class GameMap extends BaseController {
         super();
     }
 
-    public async addTileset(name: string, src: string, scale?: number) {
+    public async addTileset(name: string, fileName: FileNames, scale?: number) {
         const existingTileset = this._tilesetImages.get(name);
         if (existingTileset) {
             return existingTileset;
         }
 
-        const img = await TilemapProcessor.loadTileset(src);
+        const img = this.game.fileManager.getImage(fileName);
+        if (!img) throw new Error("Image not found")
 
         const newTileset = new Tileset(img, scale, this._mapObject);
         this._tilesetImages.set(name, newTileset);

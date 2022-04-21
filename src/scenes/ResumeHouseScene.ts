@@ -16,13 +16,11 @@ export class ResumeHouseScene extends Scene {
         super('ResumeHouse');
     }
 
-    public async preload() {
-        this._map = await this.loadTileMapJSON('/assets/tilemaps/resume-house.json');
-        this._mainTileset = await this._map.addTileset('indoor', '/assets/tilemaps/tiles/indoor.png', 1.5);
-        this._questionMark = await this.addImage('/assets/img/question.png', { x: 354, y: 125, scale: 0.5 });
-    }
-
     public async load() {
+        this._map = await this.loadTileMapJSON('resume-house');
+        this._mainTileset = await this._map.addTileset('indoor', 'indoor-tileset', 1.5);
+        this._questionMark = await this.addImage("question", { x: 354, y: 125, scale: 0.5 });
+
         this._player = Player.instance;
         this._map.createLayers(['floor'], 'indoor');
         const collisions = this._map.createLayers(['furniture', 'walls'], 'indoor');

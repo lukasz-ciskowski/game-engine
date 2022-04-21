@@ -13,7 +13,7 @@ export class InteractKey extends BaseController {
 
     async load() {
         if (!this.game.currentScene) return;
-        this._img = await this.game.currentScene.addImage('/assets/img/ekey.png', { x: 0, y: 0 });
+        this._img = await this.game.currentScene.addImage("ekey", { x: 0, y: 0 });
     }
 
     public show() {

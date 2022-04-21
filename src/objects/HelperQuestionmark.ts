@@ -24,7 +24,7 @@ export class HelperQuestionmark extends BaseController {
 
     async load() {
         if (!this.game.currentScene) return;
-        this._ekey = await this.game.currentScene.addImage('/assets/img/ekey.png', { x: 300, y: 300 });
+        this._ekey = await this.game.currentScene.addImage("ekey", { x: 300, y: 300 });
     }
 
     update(timestamp: number): void {

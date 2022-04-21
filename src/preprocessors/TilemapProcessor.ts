@@ -1,6 +1,5 @@
 import { SingleTile } from 'controllers/base/SingleTile';
 import { Tileset } from 'controllers/map/Tileset';
-import { loadImgAsync } from 'utils/imageLoader';
 
 export interface TileMapJSONData {
     layers: TileMapJSONLayer[];
@@ -19,11 +18,6 @@ interface TileMapJSONLayer {
 }
 
 export class TilemapProcessor {
-    public static async loadTileset(src: string) {
-        const img = await loadImgAsync(src);
-        return img;
-    }
-
     public static createLayer(
         layerName: string,
         mapData: TileMapJSONData,

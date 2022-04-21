@@ -1,3 +1,6 @@
+import { SpriteData } from 'preprocessors/SpriteProcessor';
+import { TileMapJSONData } from 'preprocessors/TilemapProcessor';
+import { FileNames } from 'types/config';
 import { loadImgAsync } from 'utils/imageLoader';
 import { fetchJson } from 'utils/jsonReader';
 import { BaseController, IController } from './base/BaseController';
@@ -34,24 +37,31 @@ export class Scene extends BaseController implements IScene {
         return this._queue;
     }
 
-    public async loadTileMapJSON(path: string) {
-        const result = await fetchJson(path);
+    public async loadTileMapJSON(name: FileNames) {
+        const result = this.game.fileManager.getJson<TileMapJSONData>(name);
+        if (!result) throw new Error('No config found');
+
         const map = new GameMap(result);
         await this.queue.addController(map);
         return map;
     }
 
-    public async addSprite(path: string) {
-        const result = await fetchJson(path);
-        const sprite = new SpriteObject(result, path);
+    public async addSprite(name: FileNames) {
+        const result = this.game.fileManager.getJson<SpriteData>(name);
+        const config = this.game.fileManager.getConfig(name);
+
+        if (!config || !result) throw new Error('No config found');
+
+        const sprite = new SpriteObject(result, config.url);
         await sprite.load();
         return sprite;
     }
 
-    public async addImage(path: string, props: MapImageProps) {
-        const result = await loadImgAsync(path);
+    public async addImage(name: FileNames, props: MapImageProps) {
+        const result = this.game.fileManager.getImage(name);
+        if (!result) throw new Error("No image")
+        
         const newImage = new MapImage(result, props);
-
         return newImage;
     }
 

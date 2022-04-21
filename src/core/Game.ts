@@ -2,6 +2,8 @@ import { Scene } from '../controllers/Scene';
 import { Camera } from './Camera';
 import { Cursor } from './Cursor';
 import { Queue } from '../controllers/core/Queue';
+import { FileManager } from './FileManager';
+import { FileNames } from 'types/config';
 
 interface Config {
     id: string;
@@ -16,16 +18,16 @@ export class Game {
     public readonly ctx: CanvasRenderingContext2D;
     private readonly _camera: Camera = new Camera();
     private _animationFrame: number | null = null;
-
+    
     public readonly debug: boolean = false;
-
+    
     private _scenes: Scene[];
     private _currentScene: Scene | null;
     private _scale: number = 1;
-
     private _oldTimeStamp = 0;
-
+    
     public readonly cursor = new Cursor();
+    public readonly fileManager: FileManager<FileNames> = new FileManager<FileNames>()
 
     private static _instance: Game;
 

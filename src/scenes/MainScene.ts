@@ -13,12 +13,9 @@ export class MainScene extends Scene {
         super('Main');
     }
 
-    public async preload() {
-        this._map = await this.loadTileMapJSON('/assets/tilemaps/map.json');
-        this._mainTileset = await this._map.addTileset('tileset', '/assets/tilemaps/tiles/tileset.png', 2);
-    }
-
     public async load() {
+        this._map = await this.loadTileMapJSON('map');
+        this._mainTileset = await this._map.addTileset('tileset', "map-tileset", 2);
         this._player = Player.instance;
 
         this._map.createLayers(
