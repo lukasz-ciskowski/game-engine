@@ -18,29 +18,30 @@ export class Game {
     public readonly ctx: CanvasRenderingContext2D;
     private readonly _camera: Camera = new Camera();
     private _animationFrame: number | null = null;
-    
+
     public readonly debug: boolean = false;
-    
+
     private _scenes: Scene[];
     private _currentScene: Scene | null;
     private _scale: number = 1;
     private _oldTimeStamp = 0;
-    
+
     public readonly cursor = new Cursor();
-    public readonly fileManager: FileManager<FileNames> = new FileManager<FileNames>()
+    public readonly fileManager: FileManager<FileNames> = new FileManager<FileNames>();
 
     private static _instance: Game;
 
-    public static init(config: Config) {
+    public static async init(config: Config) {
         this._instance = new Game(config);
 
         // create instances
         this._instance._scenes = config.scenes.map((scene) => new scene('scene'));
 
-        Promise.all(this._instance._scenes.map((s) => s.preload())).then(() => {
-            // load first scene
-            this._instance.loadScene(this._instance._scenes[0].name);
-        });
+        for (const scene of this._instance._scenes) {
+            await scene.preload();
+        }
+        // load first scene
+        this._instance.loadScene(this._instance._scenes[0].name);
     }
 
     constructor(config: Config) {
@@ -72,10 +73,10 @@ export class Game {
     }
 
     public gameLoop(scene: Scene, updateFn: (timestamp: number) => void, timestamp: number) {
-        if (scene.name !== this.currentScene?.name) return
+        if (scene.name !== this.currentScene?.name) return;
 
-        this.clearScene()
-    
+        this.clearScene();
+
         const secondsPassed = (timestamp - this._oldTimeStamp) / 1000;
         this._oldTimeStamp = timestamp;
 

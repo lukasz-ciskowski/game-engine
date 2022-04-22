@@ -8,6 +8,9 @@ export class Camera extends BaseController {
     private _boundOffsetX: number = 0;
     private _boundOffsetY: number = 0;
 
+    private _nextX: number = 0;
+    private _nextY: number = 0;
+
     private _bounds: [[number, number], [number, number]] = [
         [0, 0],
         [0, 0],
@@ -18,6 +21,8 @@ export class Camera extends BaseController {
     public setPosition(x: number, y: number) {
         this._x = x;
         this._y = y;
+
+        this._followSprites.forEach((s) => s.toMiddle());
     }
 
     public get x() {
@@ -29,8 +34,18 @@ export class Camera extends BaseController {
     }
 
     public move(obj: { x?: number; y?: number }) {
-        const changeX = Math.round(obj.x || 0);
-        const changeY = Math.round(obj.y || 0);
+        this._nextX = Math.round(obj.x || 0);
+        this._nextY = Math.round(obj.y || 0);
+    }
+
+    public update(timestamp: number) {
+        const changeX = this._nextX;
+        const changeY = this._nextY;
+
+        if (changeX === 0 && changeY === 0) return;
+
+        this._nextX = 0;
+        this._nextY = 0;
 
         const prevX = this._x;
         const prevY = this._y;

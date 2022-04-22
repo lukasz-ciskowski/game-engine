@@ -6,15 +6,19 @@ const WALKING_DELAY = 15;
 
 export class Player extends BaseController {
     private static _instance: Player;
-    private static _lastSavedPosInScene: Map<string, { x: number; y: number }> = new Map();
     private _canMove: boolean = true
 
     public static get instance() {
         return this._instance;
     }
 
+    load() {
+        this.game.camera.follow(Player.instance.sprite);
+    }
+
     constructor(private readonly _sprite: SpriteObject) {
         super();
+        this._sprite.setScale(0.4).setCollisionBox({ x: 4.5, y: 18, width: 10, height: 8 })
         this._sprite.animator.addFrames('idle-down', { frames: ['down-1.png'] });
         this._sprite.animator.addFrames('idle-up', { frames: ['up-1.png'] });
         this._sprite.animator.addFrames('idle-left', { frames: ['left-1.png'] });
@@ -75,21 +79,6 @@ export class Player extends BaseController {
 
     public get sprite() {
         return this._sprite;
-    }
-
-    public get lastSavedScenePos() {
-        return Player._lastSavedPosInScene.get(this.game.currentScene?.name ?? '');
-    }
-
-    public setLastScenePos(x: number, y: number) {
-        const currScene = this.game.currentScene?.name;
-        if (!currScene) return;
-
-        // since camera is taking the position without origin [0,0] but player object is centered
-        const cameraRelatedPosX = x - this.game.canvas.width / this.game.scale / 2 + this._sprite.pos.width / 2;
-        const cameraRelatedPosY = y - this.game.canvas.height / this.game.scale / 2 + this._sprite.pos.height / 2;
-
-        Player._lastSavedPosInScene.set(currScene, { x: cameraRelatedPosX, y: cameraRelatedPosY });
     }
 
     public setIsMoving(movingFlag: boolean) {

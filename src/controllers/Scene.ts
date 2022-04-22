@@ -53,7 +53,7 @@ export class Scene extends BaseController implements IScene {
         if (!config || !result) throw new Error('No config found');
 
         const sprite = new SpriteObject(result, config.url);
-        await sprite.load();
+        await this.queue.addController(sprite)
         return sprite;
     }
 

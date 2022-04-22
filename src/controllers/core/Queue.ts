@@ -7,8 +7,8 @@ export class Queue {
         const controllerToAdd = this.verifyController(controller)
         if (!controllerToAdd) return
 
-        this._controllers.push(controller);
         await controller.load();
+        this._controllers.push(controller);
     }
 
     async addControllers(controllers: BaseController[]) {
