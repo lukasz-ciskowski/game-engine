@@ -1,27 +1,27 @@
-interface AnimationConfig {
-    speed?: number;
-    frames: string[];
+interface AnimationConfig<T> {
+    delay?: number;
+    fn: (() => T)[];
 }
 
-export class Animator {
-    private _animations: Map<string, AnimationConfig> = new Map();
-    private _current?: { name: string; frame: string; config: AnimationConfig; index: number; duration: number };
+export class Animator<T = void> {
+    protected _animations: Map<string, AnimationConfig<T>> = new Map();
+    protected _current?: { name: string; fn: () => T; config: AnimationConfig<T>; index: number; duration: number };
 
-    public add(name: string, config: AnimationConfig) {
+    public add(name: string, config: AnimationConfig<T>) {
         this._animations.set(name, config);
     }
 
     public setup(name: string) {
-        if (name === this._current?.name) return false;
+        if (name === this._current?.name) return this._current;
 
         const currentAnimation = this._animations.get(name);
         if (!currentAnimation) {
             console.error('Animation', currentAnimation, 'not found');
-            return;
+            return this._current;
         }
         this._current = {
             name,
-            frame: currentAnimation.frames[0],
+            fn: currentAnimation.fn[0],
             config: currentAnimation,
             index: 0,
             duration: 0,
@@ -29,15 +29,16 @@ export class Animator {
         return this._current;
     }
 
-    public play() {
-        if (!this.current?.config.speed) return null;
-
-        this.current.duration++;
-        if (this._current && this._current.config.speed && this.current.duration % this._current.config.speed === 0) {
+    public play(timestamp: number) {
+        if (!this.current?.config.delay) return null;
+        
+        this.current.duration += 100 * timestamp;
+        if (this._current && this._current.config.delay && this.current.duration > this._current.config.delay) {
             this._current.index =
-                this._current.config.frames.length <= this._current.index + 1 ? 0 : this._current.index + 1;
-            this._current.frame = this._current.config.frames[this._current.index];
-            this._current.duration += this.current?.config.speed || 0;
+                this._current.config.fn.length <= this._current.index + 1 ? 0 : this._current.index + 1;
+            this._current.fn = this._current.config.fn[this._current.index];
+            
+            this._current.duration = 0;
             return this._current;
         }
     }

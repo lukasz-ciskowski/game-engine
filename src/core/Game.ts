@@ -2,37 +2,46 @@ import { Scene } from '../controllers/Scene';
 import { Camera } from './Camera';
 import { Cursor } from './Cursor';
 import { Queue } from '../controllers/core/Queue';
+import { FileManager } from './FileManager';
+import { FileNames } from 'types/config';
 
 interface Config {
     id: string;
     width: number;
     height: number;
     scenes: typeof Scene[];
+    debug?: boolean;
 }
 
 export class Game {
     public readonly canvas: HTMLCanvasElement;
     public readonly ctx: CanvasRenderingContext2D;
     private readonly _camera: Camera = new Camera();
+    private _animationFrame: number | null = null;
+
+    public readonly debug: boolean = false;
 
     private _scenes: Scene[];
     private _currentScene: Scene | null;
     private _scale: number = 1;
+    private _oldTimeStamp = 0;
 
     public readonly cursor = new Cursor();
+    public readonly fileManager: FileManager<FileNames> = new FileManager<FileNames>();
 
     private static _instance: Game;
 
-    public static init(config: Config) {
+    public static async init(config: Config) {
         this._instance = new Game(config);
 
         // create instances
         this._instance._scenes = config.scenes.map((scene) => new scene('scene'));
 
-        Promise.all(this._instance._scenes.map((s) => s.preload())).then(() => {
-            // load first scene
-            this._instance.loadScene(this._instance._scenes[0].name);
-        });
+        for (const scene of this._instance._scenes) {
+            await scene.preload();
+        }
+        // load first scene
+        this._instance.loadScene(this._instance._scenes[0].name);
     }
 
     constructor(config: Config) {
@@ -46,6 +55,7 @@ export class Game {
 
         this.canvas = canvas;
         this.ctx = ctx;
+        this.debug = config.debug || false;
 
         this.canvas.width = config.width;
         this.canvas.height = config.height;
@@ -63,30 +73,44 @@ export class Game {
     }
 
     public gameLoop(scene: Scene, updateFn: (timestamp: number) => void, timestamp: number) {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        updateFn.bind(scene)(timestamp);
-        this.camera.update(timestamp);
+        if (scene.name !== this.currentScene?.name) return;
+
+        this.clearScene();
+
+        const secondsPassed = (timestamp - this._oldTimeStamp) / 1000;
+        this._oldTimeStamp = timestamp;
+
+        updateFn.bind(scene)(secondsPassed);
+        this.camera.update(secondsPassed);
 
         window.requestAnimationFrame(this.gameLoop.bind(this, scene, updateFn));
     }
 
     public loadScene(name: string) {
+        this.currentScene?.unload();
+
+        if (this._animationFrame) {
+            window.cancelAnimationFrame(this._animationFrame);
+        }
+
         const curr = this._scenes.find((s) => s.name === name);
         if (!curr) {
             console.error('Failed loading scene');
             return;
         }
         this._currentScene = curr;
-        curr.load();
 
         // testing purpose
         // setInterval(() => {
         //     this.gameLoop(curr, curr.update, 0);
         // }, 1000);
-        window.requestAnimationFrame(this.gameLoop.bind(this, curr, curr.update));
+        this._animationFrame = window.requestAnimationFrame(this.gameLoop.bind(this, curr, curr.update));
+        curr.load();
     }
 
     public setScale(scale: number) {
+        this.ctx.scale(1 / this.scale, 1 / this.scale);
+
         this._scale = scale;
         this.ctx.scale(scale, scale);
     }
@@ -96,6 +120,13 @@ export class Game {
     }
 
     public get currentScene() {
-        return this._currentScene
+        return this._currentScene;
+    }
+
+    private clearScene() {
+        this.ctx.beginPath();
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+        this.ctx.rect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fill();
     }
 }

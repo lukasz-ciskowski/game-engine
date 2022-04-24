@@ -1,0 +1,39 @@
+{
+    "files": [
+        {
+            "type": "json",
+            "key": "map",
+            "url": "assets/tilemaps/map.json"
+        },
+        {
+            "type": "json",
+            "key": "resume-house",
+            "url": "assets/tilemaps/resume-house.json"
+        },
+        {
+            "type": "json",
+            "key": "player",
+            "url": "assets/player/player.json"
+        },
+        {
+            "type": "img",
+            "key": "indoor-tileset",
+            "url": "assets/tilemaps/tiles/indoor.png"
+        },
+        {
+            "type": "img",
+            "key": "map-tileset",
+            "url": "assets/tilemaps/tiles/tileset.png"
+        },
+        {
+            "type": "img",
+            "key": "ekey",
+            "url": "assets/img/ekey.png"
+        },
+        {
+            "type": "img",
+            "key": "question",
+            "url": "assets/img/question.png"
+        }
+    ]
+}
