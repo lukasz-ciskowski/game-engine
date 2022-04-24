@@ -35,9 +35,4 @@ export class MainScene extends Scene {
             [mainTileset.width, mainTileset.height],
         ]);
     }
-
-    public unload(): void {
-        super.unload();
-        // map.clearLayers();
-    }
 }
