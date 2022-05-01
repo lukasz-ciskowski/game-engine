@@ -1,19 +1,16 @@
 import { BaseController } from 'controllers/base/BaseController';
 import { MapImage } from 'controllers/map/MapImage';
-import { Player } from './Player';
+import { Player } from '../Player';
 
 export class InteractKey extends BaseController {
     private _img: MapImage;
-    private static _instance: InteractKey;
 
     constructor() {
         super();
-        InteractKey._instance = this;
     }
 
     async load() {
-        if (!this.game.currentScene) return;
-        this._img = await this.game.currentScene.addImage("ekey", { x: 0, y: 0 });
+        this._img = await this.game.currentScene.addImage('ekey', { x: 0, y: 0 });
     }
 
     public show() {
@@ -28,14 +25,10 @@ export class InteractKey extends BaseController {
             Player.instance.sprite.pos.x + Player.instance.sprite.pos.width / 2 - this._img.pos.width / 2,
             posY,
         );
-        this.game.currentScene?.queue.addController(this._img);
+        this.game.currentScene.queue.addController(this._img);
     }
 
     public hide() {
-        this.game.currentScene?.queue.removeController(this._img)
-    }
-
-    public static get instance() {
-        return this._instance;
+        this.game.currentScene.queue.removeController(this._img);
     }
 }

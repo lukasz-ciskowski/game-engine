@@ -1,4 +1,5 @@
 import { BaseController } from 'controllers/base/BaseController';
+import { GameObject } from 'controllers/base/GameObject';
 import { SpriteObject } from 'controllers/sprite/SpriteObject';
 
 const SPEED = 120;
@@ -7,17 +8,14 @@ const WALKING_DELAY = 15;
 export class Player extends BaseController {
     private static _instance: Player;
     private _canMove: boolean = true
+    private _sprite: SpriteObject
 
     public static get instance() {
         return this._instance;
     }
 
-    load() {
-        this.game.camera.follow(Player.instance.sprite);
-    }
-
-    constructor(private readonly _sprite: SpriteObject) {
-        super();
+    async load() {
+        this._sprite = await this.game.currentScene.addSprite("player")
         this._sprite.setScale(0.4).setCollisionBox({ x: 4.5, y: 18, width: 10, height: 8 })
         this._sprite.animator.addFrames('idle-down', { frames: ['down-1.png'] });
         this._sprite.animator.addFrames('idle-up', { frames: ['up-1.png'] });
@@ -42,6 +40,11 @@ export class Player extends BaseController {
         });
 
         this._sprite.playAnimation('idle-down');
+        this.game.camera.follow(this._sprite);
+    }
+
+    constructor() {
+        super();
         Player._instance = this;
     }
 
@@ -66,6 +69,10 @@ export class Player extends BaseController {
         } else {
             this.playWalkingAnimation();
         }
+    }
+
+    public interactsWith(withObjects: GameObject[]) {
+        return withObjects.some(o => o.isColliding === Player.instance.sprite)
     }
 
     private playWalkingAnimation(direction?: string) {

@@ -1,4 +1,3 @@
-import { SingleTile } from 'controllers/base/SingleTile';
 import { Frame } from 'controllers/sprite/helpers/Frame';
 import path from 'path';
 import { loadImgAsync } from 'utils/imageLoader';

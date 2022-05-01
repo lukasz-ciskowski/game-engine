@@ -62,6 +62,7 @@ export class Scene extends BaseController implements IScene {
         if (!result) throw new Error("No image")
         
         const newImage = new MapImage(result, props);
+        await this.queue.addController(newImage)
         return newImage;
     }
 

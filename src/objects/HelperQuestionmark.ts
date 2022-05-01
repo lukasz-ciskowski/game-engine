@@ -2,7 +2,6 @@ import { BaseController } from 'controllers/base/BaseController';
 import { SingleTile } from 'controllers/base/SingleTile';
 import { Animator } from 'controllers/core/Animator';
 import { MapImage } from 'controllers/map/MapImage';
-import { InteractKey } from './InteractKey';
 import { Player } from './Player';
 
 export class HelperQuestionmark extends BaseController {
@@ -15,7 +14,7 @@ export class HelperQuestionmark extends BaseController {
         const liftUp = Array.from({ length: 5 }).map(() => () => this._questionImg.move(0, 0.8));
         const liftDown = Array.from({ length: 5 }).map(() => () => this._questionImg.move(0, -0.8));
         this._animator.add('lift', {
-            fn: [...liftUp, ...liftDown],
+            animation: [...liftUp, ...liftDown],
             delay: 15,
         });
 
@@ -28,15 +27,15 @@ export class HelperQuestionmark extends BaseController {
     }
 
     update(timestamp: number): void {
-        this._animator.play(timestamp)?.fn();
+        this._animator.play(timestamp)?.animation();
 
         if (this._triggers.some((t) => t.isColliding === Player.instance.sprite)) {
             if (this.game.cursor.keyboard.e.isPressed) {
             } else {
-                InteractKey.instance.show();
+                // InteractKey.instance.show();
             }
         } else {
-            InteractKey.instance.hide();
+            // InteractKey.instance.hide();
         }
     }
 }

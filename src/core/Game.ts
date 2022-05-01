@@ -22,7 +22,7 @@ export class Game {
     public readonly debug: boolean = false;
 
     private _scenes: Scene[];
-    private _currentScene: Scene | null;
+    private _currentScene: Scene;
     private _scale: number = 1;
     private _oldTimeStamp = 0;
 

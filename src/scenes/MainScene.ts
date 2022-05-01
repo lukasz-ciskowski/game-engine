@@ -1,7 +1,5 @@
-import { GameMap } from 'controllers/map/GameMap';
-import { Tileset } from 'controllers/map/Tileset';
 import { Scene } from 'controllers/Scene';
-import { HouseEntry } from 'objects/HouseEntry';
+import { Portal } from 'objects/interactives/Portal';
 import { Player } from 'objects/Player';
 
 export class MainScene extends Scene {
@@ -19,15 +17,14 @@ export class MainScene extends Scene {
         const resumeHouse = map.createLayers(['resume-house'], 'tileset');
         const collisions = map.createLayers(['collisions'], 'tileset');
 
-        const playerSprite = await this.addSprite('player');
-        const player = new Player(playerSprite);
-        this.queue.addController(player);
+        const player = new Player();
+        await this.queue.addController(player);
 
         // layers with higher zindex
         map.createLayers(['collide-layers'], 'tileset');
 
-        this.collisions.addCollisions([[...collisions, ...resumeHouse], [playerSprite]]);
-        this.queue.addController(new HouseEntry(resumeHouse, 'ResumeHouse'));
+        this.collisions.addCollisions([[...collisions, ...resumeHouse], [player.sprite]]);
+        await this.queue.addController(new Portal(resumeHouse, 'ResumeHouse'));
 
         this.game.camera.setPosition(120, 650);
         this.game.camera.setBounds([

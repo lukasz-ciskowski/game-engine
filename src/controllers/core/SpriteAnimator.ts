@@ -7,7 +7,7 @@ interface AnimationConfig {
 
 export class SpriteAnimator extends Animator<string> {
     public addFrames(name: string, config: AnimationConfig) {
-        super.add(name, { ...config, fn: config.frames.map((f) => () => f) });
+        super.add(name, { ...config, animation: config.frames.map((f) => () => f) });
     }
 
     public setupFrames(name: string) {
@@ -21,6 +21,6 @@ export class SpriteAnimator extends Animator<string> {
     }
 
     public get currentFrame() {
-        return { ...this._current, frame: this.current?.fn() || '' };
+        return { ...this._current, frame: this.current?.animation() || '' };
     }
 }
