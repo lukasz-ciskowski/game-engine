@@ -3,15 +3,17 @@ interface AnimationConfig<T> {
     animation: (() => T)[];
 }
 
+export interface CurrentAnimation<T> {
+    name: string;
+    animation: () => T;
+    config: AnimationConfig<T>;
+    index: number;
+    duration: number;
+}
+
 export class Animator<T = void> {
     protected _animations: Map<string, AnimationConfig<T>> = new Map();
-    protected _current?: {
-        name: string;
-        animation: () => T;
-        config: AnimationConfig<T>;
-        index: number;
-        duration: number;
-    };
+    protected _current?: CurrentAnimation<T>
 
     public add(name: string, config: AnimationConfig<T>) {
         this._animations.set(name, config);
@@ -33,8 +35,8 @@ export class Animator<T = void> {
         return this._current;
     }
 
-    public play(timestamp: number) {
-        if (!this.current?.config.delay) return null;
+    public play(timestamp: number): CurrentAnimation<T> | undefined {
+        if (!this.current?.config.delay) return undefined;
 
         this.current.duration += 100 * timestamp;
         if (this._current && this._current.config.delay && this.current.duration > this._current.config.delay) {

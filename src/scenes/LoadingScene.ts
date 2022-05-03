@@ -9,6 +9,6 @@ export class LoadingScene extends Scene {
     }
 
     async load() {
-        await this.game.loadScene('Main');
+        await this.game.loadScene('ResumeHouse');
     }
 }

@@ -1,8 +1,12 @@
-import { Animator } from './Animator';
+import { Animator, CurrentAnimation } from './Animator';
 
 interface AnimationConfig {
     delay?: number;
     frames: string[];
+}
+
+interface CurrentFrameAnimation extends CurrentAnimation<string> {
+    frame: string
 }
 
 export class SpriteAnimator extends Animator<string> {
@@ -15,12 +19,13 @@ export class SpriteAnimator extends Animator<string> {
         return this.currentFrame;
     }
 
-    public playFrame(timestamp: number) {
+    public play(timestamp: number): CurrentFrameAnimation | undefined {
         super.play(timestamp);
         return this.currentFrame
     }
 
     public get currentFrame() {
+        if (!this._current) return undefined
         return { ...this._current, frame: this.current?.animation() || '' };
     }
 }

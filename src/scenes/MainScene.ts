@@ -25,7 +25,6 @@ export class MainScene extends Scene {
         // layers with higher zindex
         map.createLayers(['collide-layers'], 'tileset');
 
-        //await this.game.loadScene('ResumeHouse');
         await this.addController(new Portal(resumeHouse, 'ResumeHouse'));
 
         this.game.camera.setPosition(120, 650);

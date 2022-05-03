@@ -14,7 +14,7 @@ export class InteractKey extends BaseController {
     }
 
     public show() {
-        const currentAnim = Player.instance.sprite.animator.currentFrame.name;
+        const currentAnim = Player.instance.sprite.animator.currentFrame?.name;
 
         const posY =
             currentAnim === 'down-idle'

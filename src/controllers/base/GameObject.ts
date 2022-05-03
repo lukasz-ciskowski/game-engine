@@ -34,13 +34,15 @@ export class GameObject extends BaseController {
     public setPosition(x: number, y: number) {
         this.object.x = x;
         this.object.y = y;
+
+        return this
     }
 
     /**
      * move without validating the collision
      */
     public move(moveX: number, moveY: number) {
-        return this.setPosition(this.object.x + moveX, this.object.y + moveY);
+        this.setPosition(this.object.x + moveX, this.object.y + moveY);
     }
 
     public get isColliding() {
