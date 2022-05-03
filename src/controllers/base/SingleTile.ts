@@ -10,9 +10,13 @@ export interface TileProps extends GameObjectProps {
 export class SingleTile extends GameObject {
     protected cropProps: TileProps['crop'];
 
-    constructor({ crop, ...props }: TileProps) {
+    constructor(tileProps?: Partial<TileProps>) {
+        const { crop, ...props } = tileProps || {};
         super(props);
-        this.cropProps = crop;
+        this.cropProps = {
+            x: crop?.x || 0,
+            y: crop?.y || 0,
+        };
     }
 
     public setCrop(crop: TileProps['crop']) {
@@ -24,19 +28,16 @@ export class SingleTile extends GameObject {
             img,
             this.cropProps.x,
             this.cropProps.y,
-            this.object.width,
-            this.object.height,
-            this.object.x - this.game.camera.x,
-            this.object.y - this.game.camera.y,
-            this.object.width * this.scale,
-            this.object.height * this.scale,
+            this.original.width,
+            this.original.height,
+            this.x - this.game.camera.x,
+            this.y - this.game.camera.y,
+            this.width,
+            this.height,
         );
 
         if (this._hasCollidingProp && this.game.debug) {
-            const collisionPos = this.getCollisionPos(
-                this.object.x - this.game.camera.x,
-                this.object.y - this.game.camera.y,
-            );
+            const collisionPos = this.getCollisionBox(this.x - this.game.camera.x, this.y - this.game.camera.y);
 
             this.game.ctx.beginPath();
             this.game.ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';

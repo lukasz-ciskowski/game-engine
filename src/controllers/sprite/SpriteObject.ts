@@ -3,31 +3,22 @@ import { SpriteAnimator } from 'controllers/core/SpriteAnimator';
 import { SpriteData, SpriteProcessor } from 'preprocessors/SpriteProcessor';
 import { Frame } from './helpers/Frame';
 
+let idd = 1;
 export class SpriteObject extends SingleTile {
     private _frames: Map<string, Frame> = new Map();
     private _img: HTMLImageElement;
     private _animator = new SpriteAnimator();
+    private id: number;
 
     constructor(private readonly _spriteData: SpriteData, private readonly _dirLocation: string) {
-        // there is no frame in the beginning so there is no position at start
-        super({
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0,
-            crop: {
-                x: 0,
-                y: 0,
-            },
-        });
+        super();
+        this.id = idd;
+        idd++;
     }
 
     public async load() {
         const img = await SpriteProcessor.loadMetadata(this._spriteData, this._dirLocation);
-        if (!img) {
-            console.error('Sprite image not found');
-            return;
-        }
+        if (!img) throw new Error('Sprite image not found');
 
         this._img = img;
         this._frames = SpriteProcessor.getFrames(this._spriteData);
@@ -44,10 +35,7 @@ export class SpriteObject extends SingleTile {
 
     private setFrame(frameName: string) {
         const frame = this._frames.get(frameName);
-        if (!frame) {
-            console.error('Frame', frameName, 'not found');
-            return this;
-        }
+        if (!frame) throw new Error('Frame not found');
 
         this.setSize({ width: frame.props.w, height: frame.props.h });
         this.setCrop({ x: frame.props.x, y: frame.props.y });
@@ -55,10 +43,26 @@ export class SpriteObject extends SingleTile {
         return this;
     }
 
+    /**
+     * Before each move sprite should be validated if it is not colliding with anything
+     */
+    public move(moveX: number, moveY: number) {
+        const newX = this.x + moveX;
+        const newY = this.y + moveY;
+
+        const isColliding = this.game.currentScene?.collisions.isColliding(newX, newY, this);
+        if (isColliding) return false;
+        this.setPosition(newX, newY);
+        return true;
+    }
+
+    /**
+     * Sets the sprite middle position related to camera position
+     */
     public toMiddle() {
         return this.setPosition(
-            (this.game.canvas.width / 2 - this.origin.w) / this.game.scale + this.game.camera.x,
-            (this.game.canvas.height / 2 - this.origin.h) / this.game.scale + this.game.camera.y,
+            (this.game.canvas.width / 2 - this.center.w) / this.game.scale + this.game.camera.x,
+            (this.game.canvas.height / 2 - this.center.h) / this.game.scale + this.game.camera.y,
         );
     }
 

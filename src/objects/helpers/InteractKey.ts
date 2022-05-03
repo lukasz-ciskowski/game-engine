@@ -18,17 +18,17 @@ export class InteractKey extends BaseController {
 
         const posY =
             currentAnim === 'down-idle'
-                ? Player.instance.sprite.object.y - Player.instance.sprite.pos.height
-                : Player.instance.sprite.object.y + Player.instance.sprite.pos.height;
+                ? Player.instance.sprite.y - Player.instance.sprite.height
+                : Player.instance.sprite.y + Player.instance.sprite.height;
 
         this._img.setPosition(
-            Player.instance.sprite.pos.x + Player.instance.sprite.pos.width / 2 - this._img.pos.width / 2,
+            Player.instance.sprite.x + Player.instance.sprite.width / 2 - this._img.width / 2,
             posY,
         );
-        this.game.currentScene.queue.addController(this._img);
+        this.game.currentScene.addController(this._img);
     }
 
     public hide() {
-        this.game.currentScene.queue.removeController(this._img);
+        this.game.currentScene.removeController(this._img);
     }
 }

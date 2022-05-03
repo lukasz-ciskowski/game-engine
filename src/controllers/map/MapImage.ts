@@ -24,12 +24,12 @@ export class MapImage extends GameObject {
             this._img,
             this.cropProps?.x || 0,
             this.cropProps?.y || 0,
-            this.object.width,
-            this.object.height,
-            this.object.x - this.game.camera.x,
-            this.object.y - this.game.camera.y,
-            this.object.width * this.scale,
-            this.object.height * this.scale,
+            this.original.width,
+            this.original.height,
+            this.x - this.game.camera.x,
+            this.y - this.game.camera.y,
+            this.width,
+            this.height,
         );
     }
 }

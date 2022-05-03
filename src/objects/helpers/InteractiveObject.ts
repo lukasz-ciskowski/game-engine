@@ -21,7 +21,7 @@ export class InteractiveObject extends BaseController {
     }
 
     async load() {
-        await this.game.currentScene.queue.addController(this._interactKey);
+        await this.game.currentScene.addController(this._interactKey);
     }
 
     update(timestamp: number): void {

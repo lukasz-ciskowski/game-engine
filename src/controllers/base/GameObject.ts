@@ -1,69 +1,94 @@
 import { BaseController } from './BaseController';
 
+export interface CollisionBox {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
 export interface GameObjectProps {
     x: number;
     y: number;
     width: number;
     height: number;
-    collisionBox?: {
-        x?: number;
-        y?: number;
-        width?: number;
-        height?: number;
-    };
+    collisionBox?: Partial<CollisionBox>;
     scale?: number;
 }
 
 export class GameObject extends BaseController {
     private _isColliding: false | GameObject = false;
-    protected _hasCollidingProp: boolean = false
+    protected _hasCollidingProp: boolean = false;
+    private readonly object: GameObjectProps;
 
-    constructor(public readonly object: GameObjectProps) {
+    constructor(object?: Partial<GameObjectProps>) {
         super();
-    }
-
-    public setPosition(x: number, y: number) {
-        const isColliding = this.game.currentScene?.collisions.isColliding(x, y, this);
-        if (isColliding) return false;
-
-        this.object.x = x;
-        this.object.y = y;
-
-        return true;
-    }
-
-    public move(moveX: number, moveY: number) {
-        return this.setPosition(this.object.x + moveX, this.object.y + moveY);
-    }
-
-    public get origin() {
-        return {
-            w: (this.object.width * this.scale * this.game.scale) / 2,
-            h: (this.object.height * this.scale * this.game.scale) / 2,
+        this.object = {
+            x: object?.x || 0,
+            y: object?.y || 0,
+            width: object?.width || 0,
+            height: object?.height || 0,
         };
     }
 
-    public setColliding(collided: false | GameObject) {
-        this._isColliding = collided;
+    public setPosition(x: number, y: number) {
+        this.object.x = x;
+        this.object.y = y;
     }
 
-    public setCollidingProp() {
-        this._hasCollidingProp = true
+    /**
+     * move without validating the collision
+     */
+    public move(moveX: number, moveY: number) {
+        return this.setPosition(this.object.x + moveX, this.object.y + moveY);
     }
 
     public get isColliding() {
         return this._isColliding;
     }
 
-    public get pos() {
-        return { ...this.object, width: this.object.width * this.scale, height: this.object.height * this.scale };
+    public get x() {
+        return this.object.x;
+    }
+    public get y() {
+        return this.object.y;
     }
 
-    public getCollisionPos(relatedX: number, relatedY: number) {
+    public get width() {
+        return this.object.width * this.scale;
+    }
+
+    public get height() {
+        return this.object.height * this.scale;
+    }
+
+    public get original() {
+        return this.object;
+    }
+
+    /**
+     * Get the middle point of the object
+     */
+    public get center() {
+        return {
+            w: (this.object.width * this.scale * this.game.scale) / 2,
+            h: (this.object.height * this.scale * this.game.scale) / 2,
+        };
+    }
+
+    public setCollision(collided: false | GameObject) {
+        this._isColliding = collided;
+    }
+
+    public enableCollision() {
+        this._hasCollidingProp = true;
+    }
+
+    public getCollisionBox(relatedX: number = this.x, relatedY: number = this.y): CollisionBox {
         const x = relatedX + (this.object.collisionBox?.x || 0);
         const y = relatedY + (this.object.collisionBox?.y || 0);
-        const width = this.object.collisionBox?.width || this.pos.width - 1;
-        const height = this.object.collisionBox?.height || this.pos.height - 1;
+        const width = this.object.collisionBox?.width || this.width - 1;
+        const height = this.object.collisionBox?.height || this.height - 1;
 
         return {
             x,

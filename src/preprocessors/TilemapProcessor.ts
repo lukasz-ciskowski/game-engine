@@ -25,10 +25,7 @@ export class TilemapProcessor {
         toSearch: TileMapJSONLayer[],
     ): SingleTile[] {
         const layer = toSearch.find((layer) => layer.name === layerName);
-        if (!layer) {
-            console.error('Provided layer does not exist:', layerName);
-            return [];
-        }
+        if (!layer) throw new Error('Provided layer does not exist');
 
         if (layer.layers) {
             return layer.layers

@@ -1,50 +1,45 @@
-import { GameObject } from 'controllers/base/GameObject';
-
-type CollisionsTuple = [GameObject[], GameObject[]];
+import { CollisionBox, GameObject } from 'controllers/base/GameObject';
 
 export class Collisions {
-    private _collisions: CollisionsTuple[] = [];
+    private _obstacles: GameObject[] = [];
 
-    constructor() {}
-
-    public addCollisions(tuple: CollisionsTuple) {
-        tuple.flat().forEach((t) => t.setCollidingProp());
-        this._collisions.push(tuple);
+    public addCollisions(obstacles: GameObject[]) {
+        this._obstacles.push(...obstacles);
     }
 
-    public isColliding(newX: number, newY: number, collideObj: GameObject) {
-        let anyColliding = false;
-        this._collisions.forEach(([source, target]) => {
-            const verifyWith = target.find((c) => c === collideObj);
-            if (!verifyWith) return;
+    /**
+     * Verify given object with registered collisions
+     */
+    public isColliding(newX: number, newY: number, verifyObject: GameObject) {
+        const verifyBox = verifyObject.getCollisionBox(newX, newY);
 
-            verifyWith.setColliding(false);
-            source.forEach((s) => {
-                if (!s) return;
+        // clear all collisions before checking
+        this._obstacles.forEach((o) => o.setCollision(false));
+        for (const obstacle of this._obstacles) {
+            if (obstacle === verifyObject) {
+                continue;
+            }
 
-                s.setColliding(false);
-                const vCollision = verifyWith.getCollisionPos(newX, newY);
-                const sCollision = s.getCollisionPos(s.pos.x, s.pos.y);
+            const colliderBox = obstacle.getCollisionBox();
+            if (this.verifyCollisionBoxes(colliderBox, verifyBox)) {
+                verifyObject.setCollision(obstacle);
+                obstacle.setCollision(verifyObject);
+                return true;
+            }
+        }
 
-                if (
-                    vCollision.x + vCollision.width >= sCollision.x &&
-                    vCollision.x <= sCollision.x + sCollision.width &&
-                    vCollision.y <= sCollision.y + sCollision.height &&
-                    vCollision.y + vCollision.height >= sCollision.y
-                ) {
-                    anyColliding = true;
-                    verifyWith.setColliding(s);
-                    s.setColliding(verifyWith);
-                }
-            });
-        });
-
-        return anyColliding;
+        return false;
     }
 
-    public clear() {
-        // clear current state of collisions
-        this._collisions.flat().forEach((c) => c.forEach((el) => el.setColliding(false)));
-        this._collisions = [];
+    /**
+     * Verifies if two collision boxes overlaps
+     */
+    private verifyCollisionBoxes(source: CollisionBox, target: CollisionBox) {
+        return (
+            target.x + target.width >= source.x &&
+            target.x <= source.x + source.width &&
+            target.y <= source.y + source.height &&
+            target.y + target.height >= source.y
+        );
     }
 }

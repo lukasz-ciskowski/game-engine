@@ -1,6 +1,4 @@
 import { Scene } from 'controllers/Scene';
-import { InteractKey } from 'objects/helpers/InteractKey';
-import { Player } from 'objects/Player';
 
 export class LoadingScene extends Scene {
     public async preload() {
@@ -10,7 +8,7 @@ export class LoadingScene extends Scene {
         // await new Promise((res) => setTimeout(res, 2000));
     }
 
-    load() {
-        this.game.loadScene('ResumeHouse');
+    async load() {
+        await this.game.loadScene('Main');
     }
 }

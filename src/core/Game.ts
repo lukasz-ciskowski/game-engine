@@ -16,7 +16,7 @@ interface Config {
 export class Game {
     public readonly canvas: HTMLCanvasElement;
     public readonly ctx: CanvasRenderingContext2D;
-    private readonly _camera: Camera = new Camera();
+    private _camera: Camera;
     private _animationFrame: number | null = null;
 
     public readonly debug: boolean = false;
@@ -49,8 +49,7 @@ export class Game {
 
         const ctx = canvas?.getContext('2d', { alpha: false });
         if (!canvas || !ctx) {
-            console.error('Canvas not found');
-            return;
+            throw new Error('Canvas not found');
         }
 
         this.canvas = canvas;
@@ -61,7 +60,6 @@ export class Game {
         this.canvas.height = config.height;
 
         this.ctx.imageSmoothingEnabled = false;
-        this._camera = new Camera();
     }
 
     public static get instance() {
@@ -86,26 +84,22 @@ export class Game {
         window.requestAnimationFrame(this.gameLoop.bind(this, scene, updateFn));
     }
 
-    public loadScene(name: string) {
-        this.currentScene?.unload();
-
+    public async loadScene(name: string) {
         if (this._animationFrame) {
             window.cancelAnimationFrame(this._animationFrame);
         }
 
         const curr = this._scenes.find((s) => s.name === name);
-        if (!curr) {
-            console.error('Failed loading scene');
-            return;
-        }
+        if (!curr) throw new Error('Failed loading scene');
         this._currentScene = curr;
 
+        this._camera = new Camera();
         // testing purpose
         // setInterval(() => {
         //     this.gameLoop(curr, curr.update, 0);
         // }, 1000);
         this._animationFrame = window.requestAnimationFrame(this.gameLoop.bind(this, curr, curr.update));
-        curr.load();
+        await curr.load();
     }
 
     public setScale(scale: number) {

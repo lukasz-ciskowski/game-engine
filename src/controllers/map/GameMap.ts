@@ -5,6 +5,10 @@ import { SingleTile } from '../base/SingleTile';
 import { Layer } from './Layer';
 import { Tileset } from './Tileset';
 
+interface LayerOptions {
+    isObstacle: boolean;
+}
+
 export class GameMap extends BaseController {
     private _tilesetImages: Map<string, Tileset> = new Map();
     private _layers: Layer[] = [];
@@ -20,19 +24,16 @@ export class GameMap extends BaseController {
         }
 
         const img = this.game.fileManager.getImage(fileName);
-        if (!img) throw new Error("Image not found")
+        if (!img) throw new Error('Image not found');
 
         const newTileset = new Tileset(img, scale, this._mapObject);
         this._tilesetImages.set(name, newTileset);
         return newTileset;
     }
 
-    public createLayers(layers: string[], tilesetName: string) {
+    public createLayers(layers: string[], tilesetName: string, options?: LayerOptions) {
         const tileset = this._tilesetImages.get(tilesetName);
-        if (!tileset) {
-            console.error('No tileset found');
-            return [];
-        }
+        if (!tileset) throw new Error('No tileset found');
 
         const allCreatedTiles: SingleTile[] = [];
         layers.forEach((layer) => {
@@ -41,10 +42,14 @@ export class GameMap extends BaseController {
 
             const newLayer = new Layer(tileset.img, created);
             this._layers.push(newLayer);
-            this.game.currentScene?.queue.addController(newLayer);
 
+            this.game.currentScene?.addController(newLayer);
             allCreatedTiles.push(...created);
         });
+
+        if (options?.isObstacle) {
+            this.game.currentScene.collisions.addCollisions(allCreatedTiles);
+        }
 
         return allCreatedTiles;
     }

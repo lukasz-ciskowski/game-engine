@@ -7,14 +7,14 @@ export class Portal extends BaseController {
     constructor(_triggers: SingleTile[], private readonly _sceneToLoad: string) {
         super();
 
-        this._interaction = new InteractiveObject(_triggers, () => this.loadScene());
+        this._interaction = new InteractiveObject(_triggers, () => this.portalToScene());
     }
 
     async load() {
-        await this.game.currentScene.queue.addController(this._interaction);
+        await this.game.currentScene.addController(this._interaction);
     }
 
-    private loadScene() {
+    private portalToScene() {
         this.game.loadScene(this._sceneToLoad);
     }
 }
