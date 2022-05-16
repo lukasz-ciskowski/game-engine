@@ -1,4 +1,5 @@
 import { Scene } from 'controllers/Scene';
+import { Player } from 'objects/Player';
 
 export class LoadingScene extends Scene {
     public async preload() {
@@ -9,6 +10,7 @@ export class LoadingScene extends Scene {
     }
 
     async load() {
+        Player.init();
         await this.game.loadScene('ResumeHouse');
     }
 }

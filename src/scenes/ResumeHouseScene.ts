@@ -18,9 +18,8 @@ export class ResumeHouseScene extends Scene {
         map.createLayers(['furniture', 'walls'], 'indoor', { isObstacle: true });
         const shelves = map.createLayers(['shelfes'], 'indoor', { isObstacle: true });
         const doors = map.createLayers(['door'], 'indoor', { isObstacle: true });
-
-        const player = new Player();
-        await this.addController(player);
+        
+        await this.addController(Player.instance);
 
         await this.addController(new Portal(doors, 'Main'));
         await this.addController(

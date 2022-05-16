@@ -19,8 +19,7 @@ export class MainScene extends Scene {
         const resumeHouse = map.createLayers(['resume-house'], 'tileset', { isObstacle: true });
         map.createLayers(['collisions'], 'tileset', { isObstacle: true });
 
-        const player = new Player();
-        await this.addController(player);
+        await this.addController(Player.instance);
 
         // layers with higher zindex
         map.createLayers(['collide-layers'], 'tileset');

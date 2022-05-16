@@ -13,9 +13,15 @@ export class Player extends BaseController {
         return this._instance;
     }
 
+    public static init() {
+        this._instance = new Player();
+    }
+
     async load() {
+        const prevFrame = this._sprite ? this.sprite.animator.currentFrame?.name : null;
+
         this._sprite = await this.game.currentScene.addSprite('player');
-        
+
         this._sprite.setScale(0.4).setCollisionBox({ x: 4.5, y: 18, width: 10, height: 8 });
         this._sprite.animator.addFrames('idle-down', { frames: ['down-1.png'] });
         this._sprite.animator.addFrames('idle-up', { frames: ['up-1.png'] });
@@ -39,13 +45,12 @@ export class Player extends BaseController {
             delay: WALKING_DELAY,
         });
 
-        this._sprite.playAnimation('idle-down');
+        this._sprite.playAnimation(prevFrame ?? 'idle-down');
         this.game.camera.follow(this._sprite);
     }
 
     constructor() {
         super();
-        Player._instance = this;
     }
 
     update(timestamp: number): void {

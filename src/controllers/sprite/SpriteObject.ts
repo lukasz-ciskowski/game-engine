@@ -3,17 +3,13 @@ import { SpriteAnimator } from 'controllers/core/SpriteAnimator';
 import { SpriteData, SpriteProcessor } from 'preprocessors/SpriteProcessor';
 import { Frame } from './helpers/Frame';
 
-let idd = 1;
 export class SpriteObject extends SingleTile {
     private _frames: Map<string, Frame> = new Map();
     private _img: HTMLImageElement;
     private _animator = new SpriteAnimator();
-    private id: number;
 
     constructor(private readonly _spriteData: SpriteData, private readonly _dirLocation: string) {
         super();
-        this.id = idd;
-        idd++;
     }
 
     public async load() {

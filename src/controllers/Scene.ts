@@ -18,6 +18,8 @@ export class Scene extends BaseController implements IScene {
 
     constructor(public readonly name: string) {
         super();
+        this._queue = new Queue();
+        this._collisions = new Collisions();
     }
 
     load(): void {
