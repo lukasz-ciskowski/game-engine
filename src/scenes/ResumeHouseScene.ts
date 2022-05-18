@@ -18,10 +18,10 @@ export class ResumeHouseScene extends Scene {
         map.createLayers(['furniture', 'walls'], 'indoor', { isObstacle: true });
         const shelves = map.createLayers(['shelfes'], 'indoor', { isObstacle: true });
         const doors = map.createLayers(['door'], 'indoor', { isObstacle: true });
-        
+
         await this.addController(Player.instance);
 
-        await this.addController(new Portal(doors, 'Main'));
+        await this.addController(new Portal(doors, 'Main', { x: 240, y: 720 }));
         await this.addController(
             new InteractiveObject(
                 shelves,
@@ -32,7 +32,7 @@ export class ResumeHouseScene extends Scene {
             ),
         );
 
-        this.game.camera.setPosition(248, 220);
+        this.game.camera.setPosition({ x: 420, y: 340 });
         this.game.camera.setBounds([
             [150, 100],
             [600, 550],

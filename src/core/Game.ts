@@ -1,7 +1,6 @@
 import { Scene } from '../controllers/Scene';
 import { Camera } from './Camera';
 import { Cursor } from './Cursor';
-import { Queue } from '../controllers/core/Queue';
 import { FileManager } from './FileManager';
 import { FileNames } from 'types/config';
 

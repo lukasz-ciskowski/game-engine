@@ -1,9 +1,13 @@
 import { BaseController } from 'controllers/base/BaseController';
 import { SpriteObject } from 'controllers/sprite/SpriteObject';
 
+export interface CameraPosition {
+    x: number;
+    y: number;
+}
+
 export class Camera extends BaseController {
-    private _x: number = 0;
-    private _y: number = 0;
+    private _position: CameraPosition = { x: 0, y: 0 };
 
     private _boundOffsetX: number = 0;
     private _boundOffsetY: number = 0;
@@ -18,20 +22,25 @@ export class Camera extends BaseController {
 
     private _followSprites: SpriteObject[] = [];
 
-    public setPosition(x: number, y: number) {
-        this._x = x;
-        this._y = y;
+    /**
+     * set the initial position for camera in specific scene, the position is related to screen middle
+     */
+    public setPosition(position: CameraPosition) {
+        this._position = {
+            x: position.x - this.game.canvas.width / 2 / this.game.scale,
+            y: position.y - this.game.canvas.height / 2 / this.game.scale,
+        };
 
         // move all sprites which should be centered
         this._followSprites.forEach((s) => s.toMiddle());
     }
 
     public get x() {
-        return this._x;
+        return this._position.x;
     }
 
     public get y() {
-        return this._y;
+        return this._position.y;
     }
 
     public move(obj: { x?: number; y?: number }) {
@@ -48,14 +57,11 @@ export class Camera extends BaseController {
         this._nextX = 0;
         this._nextY = 0;
 
-        const prevX = this._x;
-        const prevY = this._y;
+        const prevX = this.x;
+        const prevY = this.y;
 
-        const nextX = this._x + changeX;
-        const nextY = this._y + changeY;
-
-        this._x = nextX;
-        this._y = nextY;
+        this._position.x += changeX;
+        this._position.y += changeY;
 
         const ableToMove = this._followSprites.every((f) => f.move(changeX, changeY));
 
@@ -76,8 +82,8 @@ export class Camera extends BaseController {
             if (this._boundOffsetY < 0) this._boundOffsetY = 0;
         }
 
-        if ((this._boundOffsetX > 0 && prevBoundX > 0) || !ableToMove) this._x = prevX;
-        if ((this._boundOffsetY > 0 && prevBoundY > 0) || !ableToMove) this._y = prevY;
+        if ((this._boundOffsetX > 0 && prevBoundX > 0) || !ableToMove) this._position.x = prevX;
+        if ((this._boundOffsetY > 0 && prevBoundY > 0) || !ableToMove) this._position.y = prevY;
     }
 
     public follow(sprite: SpriteObject) {
@@ -92,10 +98,10 @@ export class Camera extends BaseController {
      * Verify which bounds in tuple [x,y] has been hit
      */
     private isHitBounds() {
-        if (this._x <= this._bounds[0][0]) return [true, false];
-        if (this._x >= this._bounds[1][0] - this.game.canvas.width / 3) return [true, false];
-        if (this._y <= this._bounds[0][1]) return [false, true];
-        if (this._y >= this._bounds[1][1] - this.game.canvas.height / 3) return [false, true];
+        if (this.x <= this._bounds[0][0]) return [true, false];
+        if (this.x >= this._bounds[1][0] - this.game.canvas.width / 3) return [true, false];
+        if (this.y <= this._bounds[0][1]) return [false, true];
+        if (this.y >= this._bounds[1][1] - this.game.canvas.height / 3) return [false, true];
         return [false, false];
     }
 

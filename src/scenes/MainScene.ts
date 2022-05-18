@@ -26,7 +26,7 @@ export class MainScene extends Scene {
 
         await this.addController(new Portal(resumeHouse, 'ResumeHouse'));
 
-        this.game.camera.setPosition(120, 650);
+        this.game.camera.setPosition({ x: 300, y: 750 });
         this.game.camera.setBounds([
             [0, 0],
             [mainTileset.width, mainTileset.height],
