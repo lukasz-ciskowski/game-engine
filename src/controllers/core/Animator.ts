@@ -1,7 +1,10 @@
 interface AnimationConfig<T> {
     delay?: number;
-    animation: (() => T)[];
+    frames: (() => T)[];
+    variant: AnimationVariant;
 }
+
+type AnimationVariant = 'infinite' | 'linear';
 
 export interface CurrentAnimation<T> {
     name: string;
@@ -13,7 +16,7 @@ export interface CurrentAnimation<T> {
 
 export class Animator<T = void> {
     protected _animations: Map<string, AnimationConfig<T>> = new Map();
-    protected _current?: CurrentAnimation<T>
+    protected _current?: CurrentAnimation<T>;
 
     public add(name: string, config: AnimationConfig<T>) {
         this._animations.set(name, config);
@@ -27,7 +30,7 @@ export class Animator<T = void> {
 
         this._current = {
             name,
-            animation: currentAnimation.animation[0],
+            animation: currentAnimation.frames[0],
             config: currentAnimation,
             index: 0,
             duration: 0,
@@ -36,13 +39,21 @@ export class Animator<T = void> {
     }
 
     public play(timestamp: number): CurrentAnimation<T> | undefined {
-        if (!this.current?.config.delay) return undefined;
+        if (!this._current) return undefined;
 
-        this.current.duration += 100 * timestamp;
-        if (this._current && this._current.config.delay && this.current.duration > this._current.config.delay) {
-            this._current.index =
-                this._current.config.animation.length <= this._current.index + 1 ? 0 : this._current.index + 1;
-            this._current.animation = this._current.config.animation[this._current.index];
+        const { index, config } = this._current;
+        const { delay, frames, variant } = config;
+
+        if (!delay) return undefined;
+        if (frames.length === 1) return this._current;
+        const isLastFrame = frames.length <= index + 1;
+
+        if (isLastFrame && variant === 'linear') return this._current;
+
+        this._current.duration += 100 * timestamp;
+        if (this._current.duration > delay) {
+            this._current.index = isLastFrame ? 0 : index + 1;
+            this._current.animation = frames[this._current.index];
 
             this._current.duration = 0;
             return this._current;

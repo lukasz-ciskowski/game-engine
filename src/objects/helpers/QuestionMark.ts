@@ -2,8 +2,9 @@ import { BaseController } from 'controllers/base/BaseController';
 import { SingleTile } from 'controllers/base/SingleTile';
 import { Animator } from 'controllers/core/Animator';
 import { MapImage } from 'controllers/map/MapImage';
+import { FramesEngine } from 'engines/FramesEngine';
 
-const MARGIN = 20;
+const MARGIN = 15;
 
 export class QuestionMark extends BaseController {
     private readonly _animator: Animator = new Animator();
@@ -15,16 +16,26 @@ export class QuestionMark extends BaseController {
 
     async load() {
         this._img = await this.game.currentScene.addImage('question', { x: 0, y: 0 });
-        this._img.setScale(0.35)
+        this._img.setScale(0.35);
 
         const position = this.getPosAboveTriggers();
         this._img.setPosition(position.x, position.y);
 
-        const liftUp = Array.from({ length: 5 }).map(() => () => this._img.move(0, 0.8));
-        const liftDown = Array.from({ length: 5 }).map(() => () => this._img.move(0, -0.8));
         this._animator.add('lift', {
-            animation: [...liftUp, ...liftDown],
+            frames: new FramesEngine(this._img, {
+                keyframes: [
+                    {
+                        move: { x: 0, y: 2 },
+                    },
+                    {
+                        move: { x: 0, y: -2 },
+                    },
+                ],
+                transition: 5,
+                fillMode: 'both',
+            }).generate(),
             delay: 15,
+            variant: 'infinite',
         });
 
         this._animator.setup('lift');

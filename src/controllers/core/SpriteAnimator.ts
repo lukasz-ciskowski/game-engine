@@ -11,7 +11,7 @@ interface CurrentFrameAnimation extends CurrentAnimation<string> {
 
 export class SpriteAnimator extends Animator<string> {
     public addFrames(name: string, config: AnimationConfig) {
-        super.add(name, { ...config, animation: config.frames.map((f) => () => f) });
+        super.add(name, { ...config, frames: config.frames.map((f) => () => f), variant: "infinite" });
     }
 
     public setupFrames(name: string) {
