@@ -1,12 +1,17 @@
 import { SingleTile } from 'controllers/base/SingleTile';
-import { SpriteAnimator } from 'controllers/core/SpriteAnimator';
+import { Animator } from 'controllers/core/Animator';
 import { SpriteData, SpriteProcessor } from 'preprocessors/SpriteProcessor';
 import { Frame } from './helpers/Frame';
 
+interface AnimationConfig {
+    delay?: number;
+    frames: string[];
+}
+
 export class SpriteObject extends SingleTile {
-    private _frames: Map<string, Frame> = new Map();
+    private _tiles: Map<string, Frame> = new Map();
     private _img: HTMLImageElement;
-    private _animator = new SpriteAnimator();
+    private _animator = new Animator();
 
     constructor(private readonly _spriteData: SpriteData, private readonly _dirLocation: string) {
         super();
@@ -17,26 +22,25 @@ export class SpriteObject extends SingleTile {
         if (!img) throw new Error('Sprite image not found');
 
         this._img = img;
-        this._frames = SpriteProcessor.getFrames(this._spriteData);
+        this._tiles = SpriteProcessor.getTiles(this._spriteData);
     }
 
-    public playAnimation(animationName: string) {
-        const animation = this._animator.setupFrames(animationName);
-        if (!animation) {
-            return this;
-        }
-
-        this.setFrame(animation.frame);
+    public addTilesAnimation(name: string, config: AnimationConfig) {
+        this._animator.add(name, {
+            ...config,
+            frames: config.frames.map((frame) => () => {
+                this.setTile(frame);
+            }),
+            variant: 'infinite',
+        });
     }
 
-    private setFrame(frameName: string) {
-        const frame = this._frames.get(frameName);
+    private setTile(frameName: string) {
+        const frame = this._tiles.get(frameName);
         if (!frame) throw new Error('Frame not found');
 
         this.setSize({ width: frame.props.w, height: frame.props.h });
         this.setCrop({ x: frame.props.x, y: frame.props.y });
-
-        return this;
     }
 
     /**
@@ -65,9 +69,9 @@ export class SpriteObject extends SingleTile {
     update(timestamp: number): void {
         this.drawTile(this._img);
 
-        const nextAnimator = this._animator.play(timestamp);
-        if (!nextAnimator) return;
-        this.setFrame(nextAnimator.frame);
+        const nextFrame = this._animator.play(timestamp);
+        if (!nextFrame) return;
+        this.setTile(nextFrame);
     }
 
     public get animator() {

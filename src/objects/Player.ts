@@ -18,34 +18,34 @@ export class Player extends BaseController {
     }
 
     async load() {
-        const prevFrame = this._sprite ? this.sprite.animator.currentFrame?.name : null;
+        const prevFrame = this._sprite ? this.sprite.animator.current?.name : null;
 
         this._sprite = await this.game.currentScene.addSprite('player');
 
         this._sprite.setScale(0.4).setCollisionBox({ x: 4.5, y: 18, width: 10, height: 8 });
-        this._sprite.animator.addFrames('idle-down', { frames: ['down-1.png'] });
-        this._sprite.animator.addFrames('idle-up', { frames: ['up-1.png'] });
-        this._sprite.animator.addFrames('idle-left', { frames: ['left-1.png'] });
-        this._sprite.animator.addFrames('idle-right', { frames: ['right-2.png'] });
+        this._sprite.addTilesAnimation('idle-down', { frames: ['down-1.png'] });
+        this._sprite.addTilesAnimation('idle-up', { frames: ['up-1.png'] });
+        this._sprite.addTilesAnimation('idle-left', { frames: ['left-1.png'] });
+        this._sprite.addTilesAnimation('idle-right', { frames: ['right-2.png'] });
 
-        this._sprite.animator.addFrames('move-down', {
+        this._sprite.addTilesAnimation('move-down', {
             frames: ['down-2.png', 'down-3.png', 'down-4.png', 'down-1.png'],
             delay: WALKING_DELAY,
         });
-        this._sprite.animator.addFrames('move-up', {
+        this._sprite.addTilesAnimation('move-up', {
             frames: ['up-2.png', 'up-3.png', 'up-4.png', 'up-1.png'],
             delay: WALKING_DELAY,
         });
-        this._sprite.animator.addFrames('move-left', {
+        this._sprite.addTilesAnimation('move-left', {
             frames: ['left-2.png', 'left-3.png', 'left-4.png', 'left-1.png'],
             delay: WALKING_DELAY,
         });
-        this._sprite.animator.addFrames('move-right', {
+        this._sprite.addTilesAnimation('move-right', {
             frames: ['right-2.png', 'right-3.png', 'right-4.png', 'right-1.png'],
             delay: WALKING_DELAY,
         });
 
-        this._sprite.playAnimation(prevFrame ?? 'idle-down');
+        this._sprite.animator.setup(prevFrame ?? 'idle-down');
         this.game.camera.follow(this._sprite);
     }
 
@@ -80,10 +80,10 @@ export class Player extends BaseController {
      */
     private playWalkingAnimation(direction?: string) {
         if (this.sprite.isColliding || !direction) {
-            const lastFrame = this.sprite.animator.currentFrame?.frame.split('-')?.[0];
-            this.sprite.playAnimation(`idle-${lastFrame || 'down'}`);
+            const lastFrame = this.sprite.animator.current?.name.split('-')?.[1];
+            this.sprite.animator.setup(`idle-${lastFrame || 'down'}`);
         } else {
-            this.sprite.playAnimation(direction);
+            this.sprite.animator.setup(direction);
         }
     }
 

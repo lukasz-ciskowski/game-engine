@@ -42,7 +42,7 @@ export class QuestionMark extends BaseController {
     }
 
     update(timestamp: number): void {
-        this._animator.play(timestamp)?.animation();
+        this._animator.play(timestamp);
     }
 
     /**

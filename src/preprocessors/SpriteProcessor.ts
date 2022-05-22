@@ -26,7 +26,7 @@ export class SpriteProcessor {
         return await loadImgAsync(path.join(dir, spriteData.meta.image));
     }
 
-    public static getFrames(data: SpriteData): Map<string, Frame> {
+    public static getTiles(data: SpriteData): Map<string, Frame> {
         return Object.entries(data.frames).reduce<Map<string, Frame>>((acc, [frame, data]) => {
             acc.set(
                 frame,
